@@ -77,7 +77,7 @@
             
             <cfif NOT FileExists(variables.path&"/test/CheckScopes.cfc")>
 	            <!--- Create the check scopes --->
-				<cfset createCheckScopes()/>
+				<cfset variables.frameworkObj.createCheckScopes(variables.path)/>
                 <cfset ArrayAppend(testCFCs,variables.path&"/test/CheckScopes.cfc")/>
             </cfif>
             
@@ -235,32 +235,6 @@
 	    <cfreturn trim(output)/>
 	</cffunction>
     
-    <!--- Author: gregstewart - Date: 4/17/2007 --->
-	<cffunction name="createCheckScopes" output="false" access="private" returntype="void" hint="I create the test object for checking scopes">
-	    <cfset var output = ""/>
-	    
-        <cfsavecontent variable="output">
-&lt;cfcomponent name="CheckScopes" hint="I check all scopes" extends="<cfoutput>#variables.frameworkObj.getTestCase()#</cfoutput>"&gt;
-
-	&lt;cffunction name="testCheckScopes" returntype="void" access="public" output="false"&gt;  
-		&lt;cfset var varScopeChecker = CreateObject("component","stubbie.VarScopeChecker.VarScopeChecker")&gt;
-		&lt;cfset var aErrors = varScopeChecker.check( "<cfoutput>#variables.path#</cfoutput>" ) /&gt;		
-		&lt;cfset var isEmpty = evaluate("ArrayLen(aErrors) eq 0") /&gt;
-		&lt;cfset var message = "#arrayLen( aErrors )# local variable(s) were not var scoped. DETAILS: #aErrors.toString()#" /&gt;
-		
-		&lt;cfset assertEqualsBoolean(true, isEmpty, message) /&gt;
-	&lt;/cffunction&gt;
-
-&lt;/cfcomponent&gt;
-	    </cfsavecontent>
-	    
-	    <cfset output = Replace(Replace(output,"&lt;","<","ALL"),"&gt;",">","ALL")/>
-	    
-	    <cffile action="write" file="#variables.path#/test/CheckScopes.cfc" output="#trim(output)#"/>
-	    <cflog text="Create Test Suite: #variables.path#/test/CheckScopes.cfc"/>
-	    
-	</cffunction>
-
     <!--- Author: gregstewart - Date: 4/17/2007 --->
 	<cffunction name="createBuildFile" output="false" access="private" returntype="void" hint="CFC Unit Ant">
 	    <cfset var output = ""/>

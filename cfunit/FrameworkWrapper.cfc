@@ -126,4 +126,34 @@
 	    
 	    <cfreturn output/>
 	</cffunction>
+    
+    <!--- Author: gregstewart - Date: 5/10/2007 --->
+	<cffunction name="createCheckScopes" output="false" access="public" returntype="void" hint="I create the test object for checking scopes">
+	    <cfargument name="path" type="string" required="true" />
+                    
+        <cfset var output = ""/>
+	    
+        <cfsavecontent variable="output">
+&lt;cfcomponent name="CheckScopes" hint="I check all scopes" extends="<cfoutput>#getTestCase()#</cfoutput>"&gt;
+
+	&lt;cffunction name="testCheckScopes" returntype="void" access="public" output="false"&gt;  
+		&lt;cfset var varScopeChecker = CreateObject("component","stubbie.VarScopeChecker.VarScopeChecker")&gt;
+		&lt;cfset var aErrors = varScopeChecker.check( "<cfoutput>#arguments.path#</cfoutput>" ) /&gt;		
+		&lt;cfset var isEmpty = evaluate("ArrayLen(aErrors) eq 0") /&gt;
+		&lt;cfset var message = "#arrayLen( aErrors )# local variable(s) were not var scoped. DETAILS: #aErrors.toString()#" /&gt;
+		
+		&lt;cfset assertTrue(message,isEmpty) /&gt;
+	&lt;/cffunction&gt;
+
+&lt;/cfcomponent&gt;
+	    </cfsavecontent>
+	    
+	    <cfset output = Replace(Replace(output,"&lt;","<","ALL"),"&gt;",">","ALL")/>
+	    
+	    <cffile action="write" file="#variables.path#/test/CheckScopes.cfc" output="#trim(output)#"/>
+	    <cflog text="Create Test Suite: #variables.path#/test/CheckScopes.cfc"/>
+	    
+	</cffunction>
+
+    
 </cfcomponent>
