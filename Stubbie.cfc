@@ -36,6 +36,7 @@
 		
 		<cfset var qryFileList = variables.fso.list(true,'*.cfc',app)/>
 		<cfset var tmpyPath = ""/>
+        <cfset var tmpyStubObject = ""/>
 		<cfset var testForDir = ""/>
 		<cfset var stubFile = ""/>
         <cfset var testCFCs = ArrayNew(1)/>
@@ -70,13 +71,14 @@
 					<cfdirectory action="create" directory="#tmpyPath#">
 				</cfif>
 				
-				<cfset createStubObject(tmpyFile,FileExists(tmpyFile))/>
-				
+				<cfset tmpyStubObject = createStubObject(tmpyFile,FileExists(tmpyFile))/>
+				<cfset ArrayAppend(testCFCs,tmpyStubObject)/>
 			</cfloop>
             
             <cfif NOT FileExists(variables.path&"/test/CheckScopes.cfc")>
 	            <!--- Create the check scopes --->
 				<cfset createCheckScopes()/>
+                <cfset ArrayAppend(testCFCs,variables.path&"/test/CheckScopes.cfc")/>
             </cfif>
             
             <!--- Create the test suite --->
@@ -256,7 +258,7 @@
 	    
 	    <cffile action="write" file="#variables.path#/test/CheckScopes.cfc" output="#trim(output)#"/>
 	    <cflog text="Create Test Suite: #variables.path#/test/CheckScopes.cfc"/>
-	
+	    
 	</cffunction>
 
     <!--- Author: gregstewart - Date: 4/17/2007 --->

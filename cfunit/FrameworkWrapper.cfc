@@ -32,7 +32,6 @@
 	    <cfsavecontent variable="output">
 &lt;cfsilent&gt;
 	&lt;cfset testClasses = ArrayNew(1)&gt;
-    &lt;cfset ArrayAppend(testClasses, "<cfoutput>#variables.packageRoot#</cfoutput>.<cfoutput>#variables.app#</cfoutput>.test.CheckScopes")&gt;
         <cfloop from="1" to="#ArrayLen(testCFCs)#" index="i">
 	&lt;cfset ArrayAppend(testClasses, "<cfoutput>#Replace(Replace(Replace(testCFCs[i],variables.rootPath,variables.packageRoot&"."),"/",".","ALL"),".cfc","")#</cfoutput>")&gt;
         </cfloop>

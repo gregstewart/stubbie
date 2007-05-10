@@ -35,7 +35,6 @@
     &lt;cffunction name="suite" returntype="<cfoutput>#getTest()#</cfoutput>" access="public" output="false" hint=""&gt;
         &lt;cfset var testSuite = newObject("<cfoutput>#getTestSuite()#</cfoutput>").init("All cfcUnit Tests") /&gt;
         
-        &lt;cfset testSuite.addTestSuite(newObject("<cfoutput>#variables.packageRoot#</cfoutput>.<cfoutput>#variables.app#</cfoutput>.test.CheckScopes")) /&gt;
             <cfloop from="1" to="#ArrayLen(testCFCs)#" index="i">
         &lt;cfset testSuite.addTestSuite(newObject("<cfoutput>#Replace(Replace(Replace(testCFCs[i],variables.rootPath,variables.packageRoot&"."),"/",".","ALL"),".cfc","")#</cfoutput>")) /&gt;
             </cfloop>
