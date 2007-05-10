@@ -119,8 +119,8 @@
 	    
 	    <cfsavecontent variable="output">
 	&lt;cffunction name="test<cfoutput>#UCase(left(arguments.methodName,1))&right(arguments.methodName,len(arguments.methodName)-1)#</cfoutput>" returntype="void" access="public" output="false"&gt;
-	    &lt;cfset assertTrue(true, "Stub test method - put your own test here") /&gt;
-	    &lt;cfset assertFalse(false, true, "Stub test method - put your own test here") /&gt;
+	    &lt;cfset assertTrue("Stub test method - put your own test here", true) /&gt;
+	    &lt;cfset assertFalse("Stub test method - put your own test here", false) /&gt;
 	&lt;/cffunction&gt;
 	    </cfsavecontent>
 	    
