@@ -27,6 +27,7 @@
 		<cfset var padding = "">
 		<cfset var lastReturn = "">
 		<cfset var lastSpace = "">
+        <cfset var stTag = "">
 		
 		<cfloop from="1" to="#len(document)#" index="i">
 			
@@ -103,7 +104,7 @@
 		
 		<cfset var tagLocations = findTags(document,"<!---","--->")>
 		
-		<cfset var offset = 0>
+        <cfset var offset = 0>
 		<cfset var i = 0>
 		
 		<cfset var start = 0>
@@ -147,11 +148,12 @@
 		<cfargument name="tagname" type="string" required="true">
 		
 		<cfset var startTag = "">
+        <cfset var attribute = ""/>
 		<cfset var stAttributes = structNew()>
 		<cfset var aTmp = reFindNoCase('<#arguments.tagname#[^>]*>',document,1,true)>
 		<cfset var i = 1>
 		<cfset var position = 1>
-		<cfset var regex = '[[:space:]][^=]+="[^"]*"'>
+		<cfset var regex = '[[:space:]][^=]+="[^"]*"'/>
 		
 		<cfif NOT aTmp.pos[1]>
 			<cfreturn stAttributes>
@@ -186,7 +188,10 @@
 		<cfset var j = "">
 		<cfset var stMethod = "">
 		<cfset var stArgument = "">
-		
+		<cfset var aProperties = "">
+        <cfset var stProperty = "">
+        <cfset var aArguments = "">
+        
 		<cfset cleanDocument = removeComments(document)>
 		
 		<cfset stComponent = structNew()>

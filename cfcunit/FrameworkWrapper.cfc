@@ -28,7 +28,12 @@
 	    
         <cfset var output = ""/>
 	    <cfset var i = 0/>
-	    
+	    <cfset var packagePath = ""/>
+        
+        <cfif variables.packageRoot neq "">
+            <cfset packagePath = variables.packageRoot&"."/>
+        </cfif>                   
+                    
 	    <cfsavecontent variable="output">
 &lt;cfcomponent name="AllTests" extends="<cfoutput>#getObject()#</cfoutput>" output="false" hint="Runs all unit tests in package."&gt;
     
@@ -36,7 +41,7 @@
         &lt;cfset var testSuite = newObject("<cfoutput>#getTestSuite()#</cfoutput>").init("All cfcUnit Tests") /&gt;
         
             <cfloop from="1" to="#ArrayLen(testCFCs)#" index="i">
-        &lt;cfset testSuite.addTestSuite(newObject("<cfoutput>#Replace(Replace(Replace(testCFCs[i],variables.rootPath,variables.packageRoot&"."),"/",".","ALL"),".cfc","")#</cfoutput>")) /&gt;
+        &lt;cfset testSuite.addTestSuite(newObject("<cfoutput>#REReplace(Replace(Replace(testCFCs[i],variables.rootPath,packagePath),"/",".","ALL"),"(.cfc)$","")#</cfoutput>")) /&gt;
             </cfloop>
         &lt;cfreturn testSuite/&gt;
 	&lt;/cffunction&gt;	
@@ -138,7 +143,7 @@
 	    <cfset output = Replace(Replace(output,"&lt;","<","ALL"),"&gt;",">","ALL")/>
 	    
 	    <cffile action="write" file="#variables.path#/test/CheckScopes.cfc" output="#trim(output)#"/>
-	    <cflog text="Create Test Suite: #variables.path#/test/CheckScopes.cfc"/>
+	    <cflog text="Created: #variables.path#/test/CheckScopes.cfc"/>
 	    
 	</cffunction>
 

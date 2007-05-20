@@ -28,12 +28,17 @@
 	    
         <cfset var output = ""/>
 	    <cfset var i = 0/>
-	    
+	    <cfset var packagePath = ""/>
+        
+        <cfif variables.packageRoot neq "">
+            <cfset packagePath = variables.packageRoot&"."/>
+        </cfif>
+        
 	    <cfsavecontent variable="output">
 &lt;cfsilent&gt;
 	&lt;cfset testClasses = ArrayNew(1)&gt;
         <cfloop from="1" to="#ArrayLen(testCFCs)#" index="i">
-	&lt;cfset ArrayAppend(testClasses, "<cfoutput>#Replace(Replace(Replace(testCFCs[i],variables.rootPath,variables.packageRoot&"."),"/",".","ALL"),".cfc","")#</cfoutput>")&gt;
+	&lt;cfset ArrayAppend(testClasses, "<cfoutput>#REReplace(Replace(Replace(testCFCs[i],variables.rootPath,packagePath),"/",".","ALL"),"(.cfc)$","")#</cfoutput>")&gt;
         </cfloop>
 	&lt;!--- Add as many test classes as you would like to the array ---&gt;
 	&lt;cfset testsuite = CreateObject("component", "<cfoutput>#getTestSuite()#</cfoutput>").init( testClasses )&gt;
@@ -151,9 +156,8 @@
 	    <cfset output = Replace(Replace(output,"&lt;","<","ALL"),"&gt;",">","ALL")/>
 	    
 	    <cffile action="write" file="#variables.path#/test/CheckScopes.cfc" output="#trim(output)#"/>
-	    <cflog text="Create Test Suite: #variables.path#/test/CheckScopes.cfc"/>
+	    <cflog text="Created: #variables.path#/test/CheckScopes.cfc"/>
 	    
 	</cffunction>
-
     
 </cfcomponent>

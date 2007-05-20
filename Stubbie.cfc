@@ -4,6 +4,8 @@
 		<cfargument name="configFilePath" type="string" required="true" hint="config file"/>
 		
         <cfset var tmpyStruct = StructNew()/>
+        <cfset var frameworkFactory = ""/>
+        
         <cfset parseConfigFile(arguments.configFilePath)/>
                
         <cfset variables.paths = ArrayNew(1)/>
@@ -11,24 +13,13 @@
         <cfset tmpyStruct["path"] = variables.path>
         <cfset ArrayAppend(variables.paths,tmpyStruct) />
         
+        <cfset frameworkFactory = CreateObject("component","FrameworkFactory").init(variables.app,variables.path,variables.packageRoot,variables.rootPath)/>
+        <cfset variables.frameworkObj = frameworkFactory.getFrameworkWrapper(variables.unitTestFramework)/>
+        
         <cfset variables.fso = createObject("component","FileSystemObject").init(variables.path,"/")/>
         <cfset variables.util = createObject("component","Util").init(variables.path,variables.packageRoot,"/",variables.paths)/>
-		
-        <cfswitch expression="#variables.unitTestFramework#">
-            <cfcase value="cfcunit">
-                <cfset variables.allTestsPath = variables.path&"/test/AllTests.cfc"/>
-                <cfset variables.frameworkObj = createObject("component","stubbie.cfcunit.FrameworkWrapper").init(variables.app,variables.path,variables.packageRoot,variables.rootPath)/>
-            </cfcase>
-            <cfcase value="cfunit">
-                <cfset variables.allTestsPath = variables.path&"/test/cfUnitTestRunner.cfm"/>
-                <cfset variables.frameworkObj = createObject("component","stubbie.cfunit.FrameworkWrapper").init(variables.app,variables.path,variables.packageRoot,variables.rootPath)/>
-            </cfcase>
-            <cfdefaultcase>
-                <cfthrow message="#variables.unitTestFramework# is not a recognised/supported Unit test framework"/>
-            </cfdefaultcase>
-        </cfswitch>
-        
-		<cfreturn this/>
+		        
+        <cfreturn this/>
 	</cffunction>
 	
     <!--- Author: gregstewart - Date: 4/13/2007 --->
@@ -40,7 +31,7 @@
 		<cfset var testForDir = ""/>
 		<cfset var stubFile = ""/>
         <cfset var testCFCs = ArrayNew(1)/>
-        
+        <cfset var tmpyFile = ""/>
 		
         <!--- Strip out everything that is not our model folder from our query --->
         <cfquery name="qryFileList" dbtype="query">
@@ -78,8 +69,8 @@
             <cfif NOT FileExists(variables.path&"/test/CheckScopes.cfc")>
 	            <!--- Create the check scopes --->
 				<cfset variables.frameworkObj.createCheckScopes(variables.path)/>
-                <cfset ArrayAppend(testCFCs,variables.path&"/test/CheckScopes.cfc")/>
             </cfif>
+            <cfset ArrayAppend(testCFCs,variables.path&"/test/CheckScopes.cfc")/>
             
             <!--- Create the test suite --->
 			<cfset variables.frameworkObj.createTestSuite(testCFCs)/>

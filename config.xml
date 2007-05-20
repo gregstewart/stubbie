@@ -1,9 +1,9 @@
 <stubbie>
 
 	<config>
-		<appName value="itrack" /><!-- the name of your app, e.g. the folder name under which the app resides - used to suffix the root path of your app -->
+		<appName value="stubbie" /><!-- the name of your app, e.g. the folder name under which the app resides - used to suffix the root path of your app -->
 		<appPath value="/Applications/JRun4/servers/cfusion/cfusion-ear/cfusion-war/" /><!--full path to the app (minus the app folder name) -->
-		<packageRoot value="uk.co.tcias" /><!-- if you have a mapping for your app's cfcs, e.g. com.mydomain, specify it here -->
+		<packageRoot value="" /><!-- if you have a mapping for your app's cfcs, e.g. com.mydomain, specify it here -->
 		<saveTestFilesTo value="" /><!-- Not implemented yet, optional storage location for the test stubs -->
 		<unitTestFramework value="cfcUnit"/><!-- cfcUnit is currently the only allowed option here -->
 	</config>
