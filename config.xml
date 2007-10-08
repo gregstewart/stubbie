@@ -1,11 +1,12 @@
 <stubbie>
 
 	<config>
-		<appName value="stubbie" /><!-- the name of your app, e.g. the folder name under which the app resides - used to suffix the root path of your app -->
-		<appPath value="/Applications/JRun4/servers/cfusion/cfusion-ear/cfusion-war/" /><!--full path to the app (minus the app folder name) -->
-		<packageRoot value="" /><!-- if you have a mapping for your app's cfcs, e.g. com.mydomain, specify it here -->
+		<appName value="myMapping" /><!-- the name of your app, can be the mapping name as set up in cfadmin -->
+		<appPath value="/my/full/path/to/the code/" /><!--full path to the app -->
+		<packageRoot value="" /><!-- if you have a mapping for your app's cfcs, e.g. com.mydomain, specify it here (if you have specified an app name the result will be com.mydomain.myapp) -->
 		<saveTestFilesTo value="" /><!-- Not implemented yet, optional storage location for the test stubs -->
-		<unitTestFramework value="cfcUnit"/><!-- cfcUnit is currently the only allowed option here -->
+		<unitTestFramework value="cfcUnit"/><!-- cfcUnit/cfUnit -->
+		<coldSpring use="false" path="config/cs.xml"/><!-- (working on it) whether or not to use CS and if so where is the cs config file in relation to the app path -->
 	</config>
 	
 </stubbie>
