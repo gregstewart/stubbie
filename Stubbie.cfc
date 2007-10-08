@@ -205,16 +205,18 @@
 	    <cfset var i = ""/>
 	    <cfset var output = ""/>
 	    <cfset var methodList = StructKeyList(arguments.componentDetails['methods'])/>
-        <cfset var listPos = ListFind(methodList,"setUp")/>
+		<cfset var listPos = ListFind(methodList,"setUp")/>
 
-        <cfif listPos gt 0>
-	        <!--- Let's sort this list of methods a little --->
-	        <cfset methodList = ListDeleteAt(methodList,listPos)/>
-	        <cfset listPos = ListFind(methodList,"tearDown")/>
-	        <cfset methodList = ListDeleteAt(methodList,listPos)/>
-	        <cfset methodList = ListPrepend(methodList,"setUp")/>
-	        <cfset methodList = ListAppend(methodList,"tearDown")/>
-        </cfif>
+		<cfif listPos gt 0>
+			<!--- Let's sort this list of methods a little --->
+			<cfset methodList = ListDeleteAt(methodList,listPos)/>
+			<cfset methodList = ListPrepend(methodList,"setUp")/>
+		</cfif>
+		<cfset listPos = ListFind(methodList,"tearDown")/>
+		<cfif listPos gt 0>
+			<cfset methodList = ListDeleteAt(methodList,listPos)/>
+			<cfset methodList = ListAppend(methodList,"tearDown")/>
+		</cfif>
 
         <cfsavecontent variable="output">
             <cfloop list="#methodList#" index="i">
