@@ -5,8 +5,7 @@
 
         <cfset var tmpyStruct = StructNew()/>
         <cfset var frameworkFactory = ""/>
-
-        <cfset parseConfigFile(arguments.configFilePath)/>
+		<cfset parseConfigFile(arguments.configFilePath)/>
 
         <cfset variables.paths = ArrayNew(1)/>
         <cfset tmpyStruct["prefix"] = variables.app>
@@ -18,6 +17,7 @@
 
         <cfset variables.fso = createObject("component","FileSystemObject").init(variables.path,"/")/>
         <cfset variables.util = createObject("component","Util").init(variables.path,variables.packageRoot,"/",variables.paths)/>
+		<cfset variables.serverVersion = ListGetAt(server.coldfusion.productVersion,1)/>
 
         <cfif variables.useColdSpring>
             <cfset loadColdSpring()/>
@@ -53,7 +53,11 @@
 			<cfif NOT DirectoryExists(variables.path & "/test")>
 				<cfdirectory action="create" directory="#variables.path#/test">
 			<cfelse>
-				<cfdirectory directory="#variables.path#/test" action="list" name="testForDir" recurse="true"/>
+				<cfif variables.serverVersion gt 6>
+					<cfdirectory directory="#variables.path#/test" action="list" name="testForDir" recurse="true"/>
+				<cfelse>
+					<cfset testForDir = variables.fso.directoryList(variables.path&"/test","","",true)/>
+				</cfif>
 			</cfif>
 
 			<cfloop query="qryFileList">
