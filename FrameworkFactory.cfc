@@ -26,6 +26,9 @@
             <cfcase value="cfunit">
                 <cfset returnFrameworkWrapper = createObject("component","stubbie.cfunit.FrameworkWrapper").init(variables.app,variables.path,variables.packageRoot,variables.rootPath)/>
             </cfcase>
+            <cfcase value="mxunit">
+                <cfset returnFrameworkWrapper = createObject("component","stubbie.mxunit.FrameworkWrapper").init(variables.app,variables.path,variables.packageRoot,variables.rootPath)/>
+            </cfcase>
             <cfdefaultcase>
                 <cfthrow message="#arguments.factoryType# is not a recognised/supported Unit test framework" errorcode="INCORRECT_UNIT_TEST_FRAMEWORK"/>
             </cfdefaultcase>

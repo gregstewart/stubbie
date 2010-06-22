@@ -1,4 +1,4 @@
-<cfcomponent hint="I am the cfunit specific test wrapper" output="false">
+<cfcomponent hint="I am the mxunit specific test wrapper" output="false">
     <!--- Author: gregstewart - Date: 4/19/2007 --->
 	<cffunction name="init" output="false" access="public" returntype="FrameworkWrapper" hint="I initialise the component">
         <cfargument name="app" type="string" required="true" />
@@ -13,11 +13,11 @@
 	        variables.rootPath = arguments.rootPath;
         </cfscript>
 
-        <cfset setTestCase("net.sourceforge.cfunit.framework.TestCase")/>
-        <cfset setObject("")/>
+        <cfset setTestCase("mxunit.framework.TestCase")/>
+        <cfset setObject("mxunit.framework.TestCase")/>
         <cfset setTest("")/>
-        <cfset setTestSuite("net.sourceforge.cfunit.framework.TestSuite")/>
-        <cfset setTestRunner("net.sourceforge.cfunit.framework.TestRunner")/>
+        <cfset setTestSuite("mxunit.framework.TestSuite")/>
+        <cfset setTestRunner("")/>
 
 	    <cfreturn this/>
 	</cffunction>
@@ -35,39 +35,25 @@
         </cfif>
 
 	    <cfsavecontent variable="output">
-&lt;cfsilent&gt;
-	&lt;cfset testClasses = ArrayNew(1)&gt;
-        <cfloop from="1" to="#ArrayLen(testCFCs)#" index="i">
-	&lt;cfset ArrayAppend(testClasses, "<cfoutput>#REReplace(Replace(Replace(testCFCs[i],variables.rootPath,packagePath&variables.app),"/",".","ALL"),"(.cfc)$","")#</cfoutput>")&gt;
-        </cfloop>
-	&lt;!--- Add as many test classes as you would like to the array ---&gt;
-	&lt;cfset testsuite = CreateObject("component", "<cfoutput>#getTestSuite()#</cfoutput>").init( testClasses )&gt;
-&lt;/cfsilent&gt;
+&lt;cfcomponent name="AllTests" extends="<cfoutput>#getObject()#</cfoutput>" output="false" hint="Runs all unit tests in package."&gt;
 
-&lt;cfoutput&gt;
-	&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+    &lt;cffunction name="suite" returntype="<cfoutput>#getTest()#</cfoutput>" access="public" output="false" hint=""&gt;
+        &lt;cfset var testSuite = newObject("<cfoutput>#getTestSuite()#</cfoutput>").init("All cfcUnit Tests") /&gt;
 
-	&lt;html&gt;
-	&lt;head&gt;
-		&lt;title&gt;Unit Test Example&lt;/title&gt;
-	&lt;/head&gt;
+            <cfloop from="1" to="#ArrayLen(testCFCs)#" index="i">
+        &lt;cfset testSuite.addAll(newObject("<cfoutput>#REReplace(Replace(Replace(testCFCs[i],variables.rootPath,packagePath&variables.app),"/",".","ALL"),"(.cfc)$","")#</cfoutput>")) /&gt;
+            </cfloop>
+        &lt;cfreturn testSuite/&gt;
+	&lt;/cffunction&gt;
 
-	&lt;body
-	&lt;h1&gt;CFUnit Test&lt;/h1&gt;
-	&lt;cfinvoke component="<cfoutput>#getTestRunner()#</cfoutput>" method="run"&gt;
-		&lt;cfinvokeargument name="test" value="#testsuite#"&gt;
-		&lt;cfinvokeargument name="name" value=""&gt;
-	&lt;/cfinvoke&gt;
-	&lt;/body&gt;
-	&lt;/html&gt;
-&lt;/cfoutput&gt;
+&lt;/cfcomponent&gt;
 
 	    </cfsavecontent>
 
 	    <cfset output = Replace(Replace(output,"&lt;","<","ALL"),"&gt;",">","ALL")/>
 
-	    <cffile action="write" file="#variables.path#/test/cfUnitTestRunner.cfm" output="#trim(output)#"/>
-	    <cflog text="Create Test Suite: #variables.path#/test/cfUnitTestRunner.cfm"/>
+	    <cffile action="write" file="#variables.path#/test/AllTests.cfc" output="#trim(output)#"/>
+	    <cflog text="Create Test Suite: #variables.path#/test/AllTests.cfc"/>
 
 	</cffunction>
 
@@ -125,8 +111,7 @@
 	    <cfsavecontent variable="output">
 	<cfoutput>#chr(10)#</cfoutput>
 	&lt;cffunction name="test<cfoutput>#UCase(left(arguments.methodName,1))&right(arguments.methodName,len(arguments.methodName)-1)#</cfoutput>" returntype="void" access="public" output="false"&gt;
-	    &lt;cfset assertTrue("Stub test method - put your own test here", true) /&gt;
-	    &lt;cfset assertFalse("Stub test method - put your own test here", false) /&gt;
+	    &lt;cfset assertFalse(false, "Stub test method - put your own test here") /&gt;
 	&lt;/cffunction&gt;
 	<cfoutput>#chr(10)#</cfoutput>
 	    </cfsavecontent>
@@ -149,7 +134,7 @@
 		&lt;cfset var isEmpty = evaluate("ArrayLen(aErrors) eq 0") /&gt;
 		&lt;cfset var message = "#arrayLen( aErrors )# local variable(s) were not var scoped. DETAILS: #aErrors.toString()#" /&gt;
 
-		&lt;cfset assertTrue(message,isEmpty) /&gt;
+		&lt;cfset assertEqualsBoolean(true, isEmpty, message) /&gt;
 	&lt;/cffunction&gt;
 
 &lt;/cfcomponent&gt;

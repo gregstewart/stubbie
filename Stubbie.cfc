@@ -135,15 +135,15 @@
         <cfsavecontent variable="tmpyTestCFC">
 &lt;cfcomponent name="<cfoutput>#Replace(tmpyStubName,".cfc","")#</cfoutput>" extends="<cfoutput>#variables.frameworkObj.getTestCase()#</cfoutput>"&gt;
 
-	&lt;cfproperty name="variables.<cfoutput>#Replace(tmpyStubName,"Test.cfc","")#</cfoutput>" type="WEB-INF.cftags.component" hint=""/&gt;
 	&lt;!--- Test properties go here ---&gt;
-
-    <cfif NOT arguments.FileExists><cfoutput>#createSetup()#</cfoutput></cfif>
+	&lt;cfproperty name="variables.<cfoutput>#Replace(tmpyStubName,"Test.cfc","")#</cfoutput>" type="WEB-INF.cftags.component" hint=""/&gt;
+	
+    <cfif NOT arguments.FileExists><cfoutput>#createSetup(arguments.FilePath)#</cfoutput></cfif>
 
 	&lt;!--- Tests go here ---&gt;
     <cfoutput>#testMethods#</cfoutput>
 
-    <cfif NOT arguments.FileExists><cfoutput>#createTearDown()#</cfoutput></cfif>
+    <cfif NOT arguments.FileExists><cfoutput>#createTearDown(arguments.FilePath)#</cfoutput></cfif>
 
 &lt;/cfcomponent&gt;
 		</cfsavecontent>
@@ -220,10 +220,11 @@
 
         <cfsavecontent variable="output">
             <cfloop list="#methodList#" index="i">
+				<cfoutput>#chr(10)#</cfoutput>
                 <cfif REFind("^(test)",arguments.componentDetails['methods'][i]['name']) OR REFind("tearDown|setUp",arguments.componentDetails['methods'][i]['name'])><!--- TODO: The regex for tearDown and setUp could be better --->
-    <cfoutput>#trim(arguments.componentDetails['methods'][i]['fulltag'])#</cfoutput>
+    <cfoutput>#arguments.componentDetails['methods'][i]['fulltag']#</cfoutput>
                 <cfelse>
-	<cfoutput>#trim(variables.frameworkObj.getDummyTestMethod(arguments.componentDetails['methods'][i]['name']))#</cfoutput>
+	<cfoutput>#variables.frameworkObj.getDummyTestMethod(arguments.componentDetails['methods'][i]['name'])#</cfoutput>
                 </cfif>
             </cfloop>
 	    </cfsavecontent>
@@ -234,17 +235,22 @@
 
     <!--- Author: gregstewart - Date: 4/24/2007 --->
 	<cffunction name="createSetup" output="false" access="public" returntype="string" hint="I create the setup method">
-
+		<cfargument name="filePath" type="string" required="true" />
 	    <cfset var output = ""/>
+	    <cfset var componentDetails = variables.util.getCFCInformation(ReReplace(arguments.filePath,"/*(T|t)est","","ALL")) />
+	    
 	    <!--- TODO: It would be really good if we had a swicth to test for CS and if so check the init method for this object
                     and try to create one with with the CS specified dependencies:
                     - We'd need to look what the constructor arg names are
                     - Whether they exist in the CS file
                     - If they do add CS to the set up method and ask CS for that object --->
 	    <cfsavecontent variable="output">
+	<cfoutput>#chr(13)#</cfoutput>
 	&lt;cffunction name="setUp" returntype="void" access="private" output="false" hint="I set up any test data or test requirements"&gt;
 	    &lt;!--- Test set up goes here ---&gt;
+	    &lt;cfset variables.<cfoutput>#componentDetails.Name#</cfoutput> =  CreateObject("component","<cfoutput>#componentDetails.package#.#componentDetails.name#</cfoutput>").init() /&gt;
 	&lt;/cffunction&gt;
+	<cfoutput>#chr(13)#</cfoutput>
 	    </cfsavecontent>
 
 	    <cfreturn trim(output)/>
@@ -256,9 +262,11 @@
 	    <cfset var output = ""/>
 
 	    <cfsavecontent variable="output">
+	<cfoutput>#chr(10)#</cfoutput>
 	&lt;cffunction name="tearDown" output="false" access="private" returntype="void" hint="I tear down any test data"&gt;
 		&lt;!--- Test tear down goes here ---&gt;
 	&lt;/cffunction&gt;
+	<cfoutput>#chr(10)#</cfoutput>
 	    </cfsavecontent>
 
 	    <cfreturn trim(output)/>

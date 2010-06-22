@@ -1,11 +1,11 @@
 <stubbie>
 
 	<config>
-		<appName value="myMapping" /><!-- the name of your app, can be the mapping name as set up in cfadmin -->
-		<appPath value="/my/full/path/to/the code/" /><!--full path to the app -->
+		<appName value="stubbie" /><!-- the name of your app, can be the mapping name as set up in cfadmin -->
+		<appPath value="/Users/gregstewart/Sites/All sites/tcias/stubbie" /><!--full path to the app (e.g. /my/full/path/to/the code/)-->
 		<packageRoot value="" /><!-- if you have a mapping for your app's cfcs, e.g. com.mydomain, specify it here (if you have specified an app name the result will be com.mydomain.myapp) -->
 		<saveTestFilesTo value="" /><!-- Not implemented yet, optional storage location for the test stubs -->
-		<unitTestFramework value="cfcUnit"/><!-- cfcUnit/cfUnit -->
+		<unitTestFramework value="mxunit"/><!-- cfcUnit/cfUnit/mxunit -->
 		<coldSpring use="false" path="config/cs.xml"/><!-- (working on it) whether or not to use CS and if so where is the cs config file in relation to the app path -->
 	</config>
 	
