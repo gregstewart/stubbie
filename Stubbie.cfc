@@ -245,12 +245,12 @@
                     - Whether they exist in the CS file
                     - If they do add CS to the set up method and ask CS for that object --->
 	    <cfsavecontent variable="output">
-	<cfoutput>#chr(13)#</cfoutput>
+	<cfoutput>#chr(10)#</cfoutput>
 	&lt;cffunction name="setUp" returntype="void" access="private" output="false" hint="I set up any test data or test requirements"&gt;
 	    &lt;!--- Test set up goes here ---&gt;
 	    &lt;cfset variables.<cfoutput>#componentDetails.Name#</cfoutput> =  CreateObject("component","<cfoutput>#componentDetails.package#.#componentDetails.name#</cfoutput>").init() /&gt;
 	&lt;/cffunction&gt;
-	<cfoutput>#chr(13)#</cfoutput>
+	<cfoutput>#chr(10)#</cfoutput>
 	    </cfsavecontent>
 
 	    <cfreturn trim(output)/>
