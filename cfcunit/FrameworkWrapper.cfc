@@ -126,7 +126,7 @@
         <cfset var output = ""/>
 
         <cfsavecontent variable="output">
-&lt;cfcomponent name="CheckScopes" hint="I check all scopes" extends="<cfoutput>#getTestCase()#</cfoutput>"&gt;
+&lt;cfcomponent name="CheckScopesTest" hint="I check all scopes" extends="<cfoutput>#getTestCase()#</cfoutput>"&gt;
 
 	&lt;cffunction name="testCheckScopes" returntype="void" access="public" output="false"&gt;
 		&lt;cfset var varScopeChecker = CreateObject("component","stubbie.VarScopeChecker.VarScopeChecker")&gt;
@@ -142,8 +142,8 @@
 
 	    <cfset output = Replace(Replace(output,"&lt;","<","ALL"),"&gt;",">","ALL")/>
 
-	    <cffile action="write" file="#variables.path#/test/CheckScopes.cfc" output="#trim(output)#"/>
-	    <cflog text="Created: #variables.path#/test/CheckScopes.cfc"/>
+	    <cffile action="write" file="#variables.path#/test/CheckScopesTest.cfc" output="#trim(output)#"/>
+	    <cflog text="Created: #variables.path#/test/CheckScopesTest.cfc"/>
 
 	</cffunction>
 

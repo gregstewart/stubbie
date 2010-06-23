@@ -150,7 +150,7 @@
 
         <cfset tmpyTestCFC = Replace(Replace(tmpyTestCFC,"&lt;","<","ALL"),"&gt;",">","ALL")/>
 
-        <cffile action="write" file="#arguments.FilePath#" output="#trim(tmpyTestCFC)#" mode="777"/>
+        <cffile action="write" file="#arguments.FilePath#" output="#trim(tmpyTestCFC)#"/>
         <cflog text="Created #arguments.FilePath#">
 		<cfreturn arguments.FilePath/>
 	</cffunction>
