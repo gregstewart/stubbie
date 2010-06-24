@@ -72,4 +72,20 @@ Depending on what unit test framework you have chosen you also have a test suite
 Requirements:\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 \cf0 I have developed it and tested it on CFMX 8 and 7 but it should work just fine on CFMX 6.1.\
-}
+\
+\
+MXUnit\
+If you wish to view the results of a MXUnit TestSuite build cease a test.cfm file like below in your test output folder:\
+\
+\pard\pardeftab720
+
+\f1\fs22 \cf5 <cfparam\cf0  \cf5 name=\cf7 "url.output"\cf0  \cf5 default=\cf7 "html"\cf5 >\cf0 \
+\
+\cf5 <cfset\cf0  testSuite = CreateObject(\cf7 "component"\cf0 ,\cf7 "stubbie.test.AllTests"\cf0 ) \cf5 />\cf0 \
+\cf5 <cfset\cf0  result = testSuite.suite() \cf5 />\cf0 \
+\cf5 <cfoutput>\cf0 #result.getResultsOutput(url.output)#\cf5 </cfoutput>\cf0 \
+\cf5 <cfdump\cf0  \cf5 var=\cf7 "#testSuite#"\cf0  \cf5 />\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs24 \cf0 Be sure to update the path for the test suite (here I am basing it off a build I ran for stubbie). Then simply open your browser to the location of the test.cfm file and all things being well you should see the results of your test.}

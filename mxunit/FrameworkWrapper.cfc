@@ -15,7 +15,7 @@
 
         <cfset setTestCase("mxunit.framework.TestCase")/>
         <cfset setObject("mxunit.framework.TestCase")/>
-        <cfset setTest("")/>
+        <cfset setTest("any")/>
         <cfset setTestSuite("mxunit.framework.TestSuite")/>
         <cfset setTestRunner("")/>
 
@@ -38,7 +38,7 @@
 &lt;cfcomponent name="AllTests" extends="<cfoutput>#getObject()#</cfoutput>" output="false" hint="Runs all unit tests in package."&gt;
 
     &lt;cffunction name="suite" returntype="<cfoutput>#getTest()#</cfoutput>" access="public" output="false" hint=""&gt;
-        &lt;cfset var testSuite = newObject("<cfoutput>#getTestSuite()#</cfoutput>").TestSuite() /&gt;
+        &lt;cfset var testSuite = createObject("component","<cfoutput>#getTestSuite()#</cfoutput>").TestSuite() /&gt;
 
             <cfloop from="1" to="#ArrayLen(testCFCs)#" index="i">
         &lt;cfset testSuite.addAll("<cfoutput>#REReplace(Replace(Replace(testCFCs[i],variables.rootPath,packagePath&variables.app),"/",".","ALL"),"(.cfc)$","")#</cfoutput>") /&gt;
