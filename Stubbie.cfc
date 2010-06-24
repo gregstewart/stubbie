@@ -74,11 +74,11 @@
 				<cfset ArrayAppend(testCFCs,tmpyStubObject)/>
 			</cfloop>
 
-            <cfif NOT FileExists(variables.path&"/test/CheckScopes.cfc")>
+            <cfif NOT FileExists(variables.path&"/test/CheckScopesTest.cfc")>
 	            <!--- Create the check scopes --->
 				<cfset variables.frameworkObj.createCheckScopes(variables.path)/>
             </cfif>
-            <cfset ArrayAppend(testCFCs,variables.path&"/test/CheckScopes.cfc")/>
+            <cfset ArrayAppend(testCFCs,variables.path&"/test/CheckScopesTest.cfc")/>
 
             <!--- Create the test suite --->
 			<cfset variables.frameworkObj.createTestSuite(testCFCs)/>

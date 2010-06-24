@@ -33,17 +33,17 @@
         <cfif variables.packageRoot neq "">
             <cfset packagePath = variables.packageRoot&"."/>
         </cfif>
-
-	    <cfsavecontent variable="output">
+		
+		<cfsavecontent variable="output">
 &lt;cfcomponent name="AllTests" extends="<cfoutput>#getObject()#</cfoutput>" output="false" hint="Runs all unit tests in package."&gt;
 
     &lt;cffunction name="suite" returntype="<cfoutput>#getTest()#</cfoutput>" access="public" output="false" hint=""&gt;
-        &lt;cfset var testSuite = newObject("<cfoutput>#getTestSuite()#</cfoutput>").init("All cfcUnit Tests") /&gt;
+        &lt;cfset var testSuite = newObject("<cfoutput>#getTestSuite()#</cfoutput>").TestSuite() /&gt;
 
             <cfloop from="1" to="#ArrayLen(testCFCs)#" index="i">
-        &lt;cfset testSuite.addAll(newObject("<cfoutput>#REReplace(Replace(Replace(testCFCs[i],variables.rootPath,packagePath&variables.app),"/",".","ALL"),"(.cfc)$","")#</cfoutput>")) /&gt;
+        &lt;cfset testSuite.addAll("<cfoutput>#REReplace(Replace(Replace(testCFCs[i],variables.rootPath,packagePath&variables.app),"/",".","ALL"),"(.cfc)$","")#</cfoutput>") /&gt;
             </cfloop>
-        &lt;cfreturn testSuite/&gt;
+        &lt;cfreturn testSuite.run()/&gt;
 	&lt;/cffunction&gt;
 
 &lt;/cfcomponent&gt;
