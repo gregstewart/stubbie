@@ -204,8 +204,13 @@
 		<cfset var filepath = "" />
 		<cfset var i = "" />
         
+		<cfif NOT REFind("(.cfc)$",arguments.file)>
+			<!--- agressively trimmed off the .cfc in createSetup() fix it --->
+			<cfset arguments.file = arguments.file & ".cfc" />
+		</cfif>
+		
         <cftry>
-    		<cffile action="read" file="#file#"  variable="fileContents">
+    		<cffile action="read" file="#arguments.file#"  variable="fileContents">
             <cfcatch type="any">
                 <!--- TODO: Errors here relate to reading framework type files or other external cfc groups (ignore for now) --->
             </cfcatch>

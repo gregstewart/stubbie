@@ -123,7 +123,7 @@
         <cfset var cfcMethods = ""/>
 
         <cfset testMethods = parseMethods(Replace(Replace(arguments.FilePath,"Test.cfc",".cfc"),"/test",""))/>
-        <!--- TODO: add update capibility here, if the tets object already exists we just want to append a new method --->
+        <!--- TODO: add update capibility here, if the test object already exists we just want to append a new method --->
         <cfif arguments.FileExists>
             <cfset existingMethods = parseMethods(arguments.FilePath)/>
 
@@ -191,8 +191,16 @@
 
         <cfloop collection="#arguments.cfcMethods.methods#" item="i">
             <cfif NOT StructKeyExists(arguments.existing.methods,"test"&i)>
-                <cfset StructInsert(arguments.existing.methods,i,arguments.cfcMethods.methods[i])/>
-            </cfif>
+                <cftry>
+					<cfcatch type="any">
+						<cfset StructInsert(arguments.existing.methods,i,arguments.cfcMethods.methods[i])/>
+            			<cfdump var="#i#" />
+						<cfdump var="#arguments.existing.methods#" />
+						<cfdump var="#arguments.existing.cfcMethods#" />
+						<cfabort />
+					</cfcatch>
+				</cftry>
+			</cfif>
         </cfloop>
 
 	    <cfreturn arguments.existing />
@@ -237,13 +245,15 @@
 	<cffunction name="createSetup" output="false" access="public" returntype="string" hint="I create the setup method">
 		<cfargument name="filePath" type="string" required="true" />
 	    <cfset var output = ""/>
-	    <cfset var componentDetails = variables.util.getCFCInformation(ReReplace(arguments.filePath,"/*(T|t)est","","ALL")) />
+	    <cfset var cleasendTest = ReReplace(arguments.filePath,"\/(T|t)est|(T|t)est+(.cfc)$","","ALL") />
+	    <cfset var componentDetails = variables.util.getCFCInformation(cleasendTest) />
 	    
 	    <!--- TODO: It would be really good if we had a swicth to test for CS and if so check the init method for this object
                     and try to create one with with the CS specified dependencies:
                     - We'd need to look what the constructor arg names are
                     - Whether they exist in the CS file
                     - If they do add CS to the set up method and ask CS for that object --->
+	    <cftry>
 	    <cfsavecontent variable="output">
 	<cfoutput>#chr(10)#</cfoutput>
 	&lt;cffunction name="setUp" returntype="void" access="private" output="false" hint="I set up any test data or test requirements"&gt;
@@ -252,6 +262,10 @@
 	&lt;/cffunction&gt;
 	<cfoutput>#chr(10)#</cfoutput>
 	    </cfsavecontent>
+			<cfcatch type="any">
+				<cfdump var="#componentDetails#" /><cfabort />
+			</cfcatch>
+		</cftry>
 
 	    <cfreturn trim(output)/>
 	</cffunction>
