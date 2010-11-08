@@ -52,9 +52,8 @@
 
 	    <cfset output = Replace(Replace(output,"&lt;","<","ALL"),"&gt;",">","ALL")/>
 
-	    <cffile action="write" file="#variables.path#/test/AllTests.cfc" output="#trim(output)#"/>
-	    <cflog text="Create Test Suite: #variables.path#/test/AllTests.cfc"/>
-
+	    <cffile action="write" file="#variables.path#/test/AllTests.cfc" output="#trim(output)#" mode="777"/>
+	    
 	</cffunction>
 
     <!--- Author: gregstewart - Date: 4/19/2007 - getter and setter for TestCase --->

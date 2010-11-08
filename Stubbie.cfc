@@ -5,11 +5,15 @@
 
         <cfset var tmpyStruct = StructNew()/>
         <cfset var frameworkFactory = ""/>
+		
+		<cfset variables.paths = ArrayNew(1)/>
+        <cfset variables.ColdSrpingLoaded = false />
+        
+		
 		<cfset parseConfigFile(arguments.configFilePath)/>
 
-        <cfset variables.paths = ArrayNew(1)/>
-        <cfset tmpyStruct["prefix"] = variables.app>
-        <cfset tmpyStruct["path"] = variables.path>
+        <cfset tmpyStruct["prefix"] = variables.app />
+        <cfset tmpyStruct["path"] = variables.path />
         <cfset ArrayAppend(variables.paths,tmpyStruct) />
 
         <cfset frameworkFactory = CreateObject("component","FrameworkFactory").init(variables.app,variables.path,variables.packageRoot,variables.rootPath)/>
@@ -20,7 +24,7 @@
 		<cfset variables.serverVersion = ListGetAt(server.coldfusion.productVersion,1)/>
 
         <cfif variables.useColdSpring>
-            <cfset loadColdSpring()/>
+            <cfset loadColdSpring() />
         </cfif>
 
         <cfreturn this/>
@@ -51,7 +55,7 @@
 		<cfif qryFileList.recordCount>
 
 			<cfif NOT DirectoryExists(variables.path & "/test")>
-				<cfdirectory action="create" directory="#variables.path#/test">
+				<cfdirectory action="create" directory="#variables.path#/test" mode="777">
 			<cfelse>
 				<cfif variables.serverVersion gt 6>
 					<cfdirectory directory="#variables.path#/test" action="list" name="testForDir" recurse="true"/>
@@ -66,7 +70,6 @@
 				<cfset tmpyFile = Replace(Replace(qryFileList.fullpath&"/"&qryFileList.Name,variables.path,variables.path&"/test"),".cfc","Test.cfc")/>
 
 				<cfif NOT DirectoryExists(tmpyPath)>
-					<cflog text="Created #tmpyPath#"/>
 					<cfdirectory action="create" directory="#tmpyPath#" mode="777">
 				</cfif>
 
@@ -142,7 +145,7 @@
 
 	&lt;!--- Tests go here ---&gt;
     <cfoutput>#testMethods#</cfoutput>
-
+	<cfoutput>#chr(10)#</cfoutput>
     <cfif NOT arguments.FileExists><cfoutput>#createTearDown(arguments.FilePath)#</cfoutput></cfif>
 
 &lt;/cfcomponent&gt;
@@ -150,8 +153,8 @@
 
         <cfset tmpyTestCFC = Replace(Replace(tmpyTestCFC,"&lt;","<","ALL"),"&gt;",">","ALL")/>
 
-        <cffile action="write" file="#arguments.FilePath#" output="#trim(tmpyTestCFC)#"/>
-        <cflog text="Created #arguments.FilePath#">
+        <cffile action="write" file="#arguments.FilePath#" output="#trim(tmpyTestCFC)#" mode="777"/>
+        
 		<cfreturn arguments.FilePath/>
 	</cffunction>
 
@@ -178,8 +181,8 @@
         </cfif>
 
         <cfset variables.myBeanFactory.loadBeansFromXmlFile(variables.path&"/"&variables.coldSpringConfigPath,true)/>
-        <!--- <cfdump var="#variables.myBeanFactory.GETBEANDEFINITIONLIST()#"/><cfabort /> --->
-        <cflog text="ColdSpring bean factory loaded">
+        
+		<cfset variables.ColdSrpingLoaded = true />
     </cffunction>
 
     <!--- Author: gregstewart - Date: 4/23/2007 --->
@@ -234,6 +237,7 @@
                 <cfelse>
 	<cfoutput>#variables.frameworkObj.getDummyTestMethod(arguments.componentDetails['methods'][i]['name'])#</cfoutput>
                 </cfif>
+				<cfoutput>#chr(10)#</cfoutput>
             </cfloop>
 	    </cfsavecontent>
 
@@ -248,25 +252,23 @@
 	    <cfset var cleasendTest = ReReplace(arguments.filePath,"\/(T|t)est|(T|t)est+(.cfc)$","","ALL") />
 	    <cfset var componentDetails = variables.util.getCFCInformation(cleasendTest) />
 	    
-	    <!--- TODO: It would be really good if we had a swicth to test for CS and if so check the init method for this object
-                    and try to create one with with the CS specified dependencies:
-                    - We'd need to look what the constructor arg names are
-                    - Whether they exist in the CS file
-                    - If they do add CS to the set up method and ask CS for that object --->
-	    <cftry>
 	    <cfsavecontent variable="output">
+		    
 	<cfoutput>#chr(10)#</cfoutput>
 	&lt;cffunction name="setUp" returntype="void" access="private" output="false" hint="I set up any test data or test requirements"&gt;
 	    &lt;!--- Test set up goes here ---&gt;
+	    <cfif NOT variables.useColdSpring AND NOT variables.ColdSrpingLoaded>
 	    &lt;cfset variables.<cfoutput>#componentDetails.Name#</cfoutput> =  CreateObject("component","<cfoutput>#componentDetails.package#.#componentDetails.name#</cfoutput>").init() /&gt;
+	    <cfelse>
+	    &lt;cfset variables.beanFactory = createObject("component","coldspring.beans.DefaultXmlBeanFactory").init() /&gt;
+        &lt;cfset variables.beanFactory.loadBeansFromXmlFile("<cfoutput>#variables.path#</cfoutput>/<cfoutput>#variables.coldSpringConfigPath#</cfoutput>",true) /&gt;
+        
+	    &lt;cfset variables.<cfoutput>#componentDetails.Name#</cfoutput> =  variables.beanFactory.getBean("<cfoutput>#componentDetails.Name#</cfoutput>") /&gt;
+		</cfif>
 	&lt;/cffunction&gt;
 	<cfoutput>#chr(10)#</cfoutput>
 	    </cfsavecontent>
-			<cfcatch type="any">
-				<cfdump var="#componentDetails#" /><cfabort />
-			</cfcatch>
-		</cftry>
-
+	
 	    <cfreturn trim(output)/>
 	</cffunction>
 
@@ -276,6 +278,7 @@
 	    <cfset var output = ""/>
 
 	    <cfsavecontent variable="output">
+		    
 	<cfoutput>#chr(10)#</cfoutput>
 	&lt;cffunction name="tearDown" output="false" access="private" returntype="void" hint="I tear down any test data"&gt;
 		&lt;!--- Test tear down goes here ---&gt;
