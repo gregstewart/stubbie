@@ -1,8 +1,9 @@
 {\rtf1\ansi\ansicpg1252\cocoartf1038\cocoasubrtf320
 {\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 Monaco;}
 {\colortbl;\red255\green255\blue255;\red0\green0\blue225;\red0\green0\blue128;\red34\green136\blue32;
-\red128\green0\blue0;\red0\green0\blue102;\red0\green0\blue255;}
-\paperw11900\paperh16840\margl1440\margr1440\vieww21140\viewh19800\viewkind0
+\red128\green0\blue0;\red0\green0\blue102;\red0\green0\blue255;\red0\green128\blue0;\red163\green21\blue21;
+\red255\green0\blue0;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww21140\viewh19520\viewkind0
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
 
 \f0\fs24 \cf0 Stubbie 0.1\
@@ -77,7 +78,7 @@ Requirements:\
 MXUnit\
 If you wish to view the results of a MXUnit TestSuite build cease a test.cfm file like below in your test output folder:\
 \
-\pard\pardeftab720
+\pard\pardeftab720\ql\qnatural
 
 \f1\fs22 \cf5 <cfparam\cf0  \cf5 name=\cf7 "url.output"\cf0  \cf5 default=\cf7 "html"\cf5 >\cf0 \
 \
@@ -88,4 +89,32 @@ If you wish to view the results of a MXUnit TestSuite build cease a test.cfm fil
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 
-\f0\fs24 \cf0 Be sure to update the path for the test suite (here I am basing it off a build I ran for stubbie). Then simply open your browser to the location of the test.cfm file and all things being well you should see the results of your test.}
+\f0\fs24 \cf0 Be sure to update the path for the test suite (here I am basing it off a build I ran for stubbie). Then simply open your browser to the location of the test.cfm file and all things being well you should see the results of your test.\
+\
+Mach-ii plugin\
+I am assuming that you have followed the previous steps and are using a mapping called stubbie.  To add the mach-ii plugin imply add the \
+\pard\pardeftab720
+
+\f1\fs22 \cf8 <!-- PLUGINS -->\cf0 \
+\pard\pardeftab720
+\cf7 <\cf9 plugins\cf7 >\
+\pard\pardeftab720
+
+\f0\fs24 \cf0 	
+\f1\fs22 \cf8 <!-- Start stubbie plugin code -->
+\f0\fs24 \cf0 \
+\pard\pardeftab720
+
+\f1\fs22 \cf7 	<\cf9 plugin\cf0  \cf10 name\cf0 ="\cf7 StubbiePlugin\cf0 " \cf10 type\cf0 ="\cf7 stubbie.machii.StubbiePlugin\cf0 "\cf7 >\cf0 \
+		\cf7 <\cf9 parameters\cf7 >\cf0 \
+			\cf7 <\cf9 parameter\cf0  \cf10 name\cf0 ="\cf7 stubbieConfigFilePath\cf0 " \cf10 value\cf0 ="\cf7 ./config/stubbie/config.xml\cf0 " \cf7 />\cf0 \
+		\cf7 </\cf9 parameters\cf7 >\cf0 \
+	\cf7 </\cf9 plugin\cf7 >\
+\pard\pardeftab720\ql\qnatural
+
+\f0\fs24 \cf0 	
+\f1\fs22 \cf8 <!-- End stubbie plugin code -->
+\f0\fs24 \cf0 \
+\pard\pardeftab720
+
+\f1\fs22 \cf7 </\cf9 plugins\cf7 >}

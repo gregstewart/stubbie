@@ -38,19 +38,18 @@
 <cfcomponent displayname="StubbieMachiiPlugin" extends="MachII.framework.Plugin" hint="I do initialization tasks.">
 
 	<cffunction name="configure" access="public" returntype="void" output="false">
-		<cfset var pm = getAppManager().getPropertyManager()/>
-	    
+		<cfset var pm = getAppManager().getPropertyManager() />
+
 		<!--- determine the location of the config file --->
-		<cfset var configFile = pm.getProperty(getParameter('configFile','stubbieConfigFilePath'))/>
-        <cfset variables.stubbie = CreateObject("component","stubbie.Stubbie").init(ExpandPath(configFile))/>
+		<cfset var configFilePath = getParameter('stubbieConfigFilePath') />
+		<cfset variables.stubbie = CreateObject("component","stubbie.Stubbie").init(ExpandPath(configFilePath)) />
 		
     </cffunction>
 
 	<!--- PUBLIC FUNCTIONS --->
 	<cffunction name="preProcess" access="public" returntype="void" output="true">
 		<cfargument name="eventContext" type="MachII.framework.EventContext" required="true" />
-		<!--- <cfoutput>&nbsp;SimplePlugin.preProcess()<br /></cfoutput> --->
-        
+		
         <cfset variables.stubbie.build()/>
     </cffunction>
 
