@@ -207,7 +207,7 @@
         <cftry>
     		<cffile action="read" file="#file#"  variable="fileContents">
             <cfcatch type="any">
-                <!--- TODO: Errors here relate to reading frameowkr type files (ignore for now) --->
+                <!--- TODO: Errors here relate to reading framework type files or other external cfc groups (ignore for now) --->
             </cfcatch>
 		</cftry>
         
@@ -234,13 +234,28 @@
 			
 			<!--- duplicate to definitively sever from the cache --->
 			<cfset stComponent = duplicate(stComponent) />
-			
-			<cfif stComponent.attributes.extends NEQ "cfcomponent">
+			<!--- If the component extends another and is not a third party framework parse that one as well --->
+			<cfif stComponent.attributes.extends NEQ "cfcomponent" AND NOT isFrameworkFile(stComponent.attributes.extends)>
 				<cfset stComponent.superComponent = getCFCInformation(getFilePath(stComponent.attributes.extends, stComponent.path)) />
 			</cfif>
 		</cfif>
 		
 		<cfreturn stComponent />
 	</cffunction>
-
+	
+	
+	<cffunction name="isFrameworkFile" access="public" output="false" returntype="boolean">
+		<cfargument name="component" type="string" required="true" />
+		
+		<cfset var frameworkList = "mxunit,machii,coldspring" />
+		
+		<cfif ListFindNoCase(frameworkList,ListFirst(arguments.component,"."))>
+			<cfreturn true />
+		</cfif>
+		
+		<cfreturn false>
+		
+		
+		<cflog text="#component#"><cfabort />
+	</cffunction>
 </cfcomponent>
