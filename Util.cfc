@@ -253,9 +253,6 @@
 			<cfreturn true />
 		</cfif>
 		
-		<cfreturn false>
-		
-		
-		<cflog text="#component#"><cfabort />
+		<cfreturn false />
 	</cffunction>
 </cfcomponent>
