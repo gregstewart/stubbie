@@ -1,7 +1,7 @@
 {\rtf1\ansi\ansicpg1252\cocoartf1038\cocoasubrtf320
 {\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 Monaco;}
 {\colortbl;\red255\green255\blue255;\red0\green0\blue225;\red0\green0\blue128;\red34\green136\blue32;
-\red128\green0\blue0;\red0\green0\blue102;\red0\green0\blue255;\red0\green128\blue0;\red163\green21\blue21;
+\red0\green128\blue0;\red128\green0\blue0;\red0\green0\blue102;\red0\green0\blue255;\red163\green21\blue21;
 \red255\green0\blue0;}
 \paperw11900\paperh16840\margl1440\margr1440\vieww21140\viewh19520\viewkind0
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
@@ -41,6 +41,7 @@ Open up the config.xml file and edit it the following settings\
 		\cf2 <packageRoot\cf0  \cf2 value=\cf3 "com.myDomain"\cf0  \cf2 />\cf4 <!--\cf0  \cf4 if\cf0  \cf4 you\cf0  \cf4 have\cf0  \cf4 a\cf0  \cf4 mapping\cf0  \cf4 for\cf0  \cf4 your\cf0  \cf4 app's\cf0  \cf4 cfcs,\cf0  \cf4 e.g.\cf0  \cf4 com.mydomain,\cf0  \cf4 specify\cf0  \cf4 it\cf0  \cf4 here\cf0  \cf4 -->\cf0 \
 		\cf2 <saveTestFilesTo\cf0  \cf2 value=\cf3 ""\cf0  \cf2 />\cf4 <!--\cf0  \cf4 Not\cf0  \cf4 implemented\cf0  \cf4 yet,\cf0  \cf4 optional\cf0  \cf4 storage\cf0  \cf4 location\cf0  \cf4 for\cf0  \cf4 the\cf0  \cf4 test\cf0  \cf4 stubs\cf0  \cf4 -->\cf0 \
 		\cf2 <unitTestFramework\cf0  \cf2 value=\cf3 "cfcUnit" \cf2 />\cf4 <!--\cf0  \cf4 cfcUnit\cf0 ,\cf4  cfUnit and mxunit are\cf0  \cf4 allowed\cf0  \cf4 options\cf0  \cf4 here\cf0  \cf4 -->\cf0 \
+		\cf2 <coldSpring\cf0  \cf2 use=\cf3 "false"\cf0  \cf2 path=\cf3 "config/cs.xml"\cf0  \cf2 useMachIIColdSpring=\cf3 "false" \cf2 />\cf5 <!-- use CS to autowire to wire up the beans, if MachII app use that CS -->\cf0 \
 	\cf2 </config>\cf0 \
 	\
 \cf2 </stubbie>
@@ -51,10 +52,10 @@ Step 2\
 Place the following code in anywhere you wish to invoke stubbie from:\
 \pard\pardeftab720\ql\qnatural
 
-\f1\fs22 \cf5 <cfset\cf0  configFilePath = \cf6 ExpandPath\cf0 (\cf7 './config.xml'\cf0 )\cf5 />\cf0 \
+\f1\fs22 \cf6 <cfset\cf0  configFilePath = \cf7 ExpandPath\cf0 (\cf8 './config.xml'\cf0 )\cf6 />\cf0 \
 \
-\cf5 <cfset\cf0  stubbie = \cf6 CreateObject\cf0 (\cf7 "component"\cf0 ,\cf7 "Stubbie"\cf0 ).init(configFilePath)/\cf5 >\cf0 \
-\cf5 <cfset\cf0  stubbie.build()\cf5 />\
+\cf6 <cfset\cf0  stubbie = \cf7 CreateObject\cf0 (\cf8 "component"\cf0 ,\cf8 "Stubbie"\cf0 ).init(configFilePath)/\cf6 >\cf0 \
+\cf6 <cfset\cf0  stubbie.build()\cf6 />\
 \
 \pard\pardeftab720\ql\qnatural
 
@@ -80,41 +81,58 @@ If you wish to view the results of a MXUnit TestSuite build cease a test.cfm fil
 \
 \pard\pardeftab720\ql\qnatural
 
-\f1\fs22 \cf5 <cfparam\cf0  \cf5 name=\cf7 "url.output"\cf0  \cf5 default=\cf7 "html"\cf5 >\cf0 \
+\f1\fs22 \cf6 <cfparam\cf0  \cf6 name=\cf8 "url.output"\cf0  \cf6 default=\cf8 "html"\cf6 >\cf0 \
 \
-\cf5 <cfset\cf0  testSuite = CreateObject(\cf7 "component"\cf0 ,\cf7 "stubbie.test.AllTests"\cf0 ) \cf5 />\cf0 \
-\cf5 <cfset\cf0  result = testSuite.suite() \cf5 />\cf0 \
-\cf5 <cfoutput>\cf0 #result.getResultsOutput(url.output)#\cf5 </cfoutput>\cf0 \
-\cf5 <cfdump\cf0  \cf5 var=\cf7 "#testSuite#"\cf0  \cf5 />\
+\cf6 <cfset\cf0  testSuite = CreateObject(\cf8 "component"\cf0 ,\cf8 "stubbie.test.AllTests"\cf0 ) \cf6 />\cf0 \
+\cf6 <cfset\cf0  result = testSuite.suite() \cf6 />\cf0 \
+\cf6 <cfoutput>\cf0 #result.getResultsOutput(url.output)#\cf6 </cfoutput>\cf0 \
+\cf6 <cfdump\cf0  \cf6 var=\cf8 "#testSuite#"\cf0  \cf6 />\
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 
 \f0\fs24 \cf0 Be sure to update the path for the test suite (here I am basing it off a build I ran for stubbie). Then simply open your browser to the location of the test.cfm file and all things being well you should see the results of your test.\
 \
 Mach-ii plugin\
-I am assuming that you have followed the previous steps and are using a mapping called stubbie.  To add the mach-ii plugin imply add the \
-\pard\pardeftab720
+I am assuming that you have followed the previous steps and are using a mapping called stubbie.  To add the mach-ii plugin imply add the the lines found between 
+\f1\fs22 \cf5 <!-- Start stubbie plugin code --> 
+\f0\fs24 \cf0 and 
+\f1\fs22 \cf5  <!-- Start stubbie plugin code -->
+\f0\fs24 \cf0 . This also assumes that you have a your stubby config file inside a config folder under the root of your mach-ii application.\
+\
+\pard\pardeftab720\ql\qnatural
 
-\f1\fs22 \cf8 <!-- PLUGINS -->\cf0 \
-\pard\pardeftab720
-\cf7 <\cf9 plugins\cf7 >\
-\pard\pardeftab720
-
-\f0\fs24 \cf0 	
-\f1\fs22 \cf8 <!-- Start stubbie plugin code -->
-\f0\fs24 \cf0 \
-\pard\pardeftab720
-
-\f1\fs22 \cf7 	<\cf9 plugin\cf0  \cf10 name\cf0 ="\cf7 StubbiePlugin\cf0 " \cf10 type\cf0 ="\cf7 stubbie.machii.StubbiePlugin\cf0 "\cf7 >\cf0 \
-		\cf7 <\cf9 parameters\cf7 >\cf0 \
-			\cf7 <\cf9 parameter\cf0  \cf10 name\cf0 ="\cf7 stubbieConfigFilePath\cf0 " \cf10 value\cf0 ="\cf7 ./config/stubbie/config.xml\cf0 " \cf7 />\cf0 \
-		\cf7 </\cf9 parameters\cf7 >\cf0 \
-	\cf7 </\cf9 plugin\cf7 >\
+\f1\fs22 \cf5 <!-- PLUGINS -->\cf0 \
+\pard\pardeftab720\ql\qnatural
+\cf8 <\cf9 plugins\cf8 >\
 \pard\pardeftab720\ql\qnatural
 
 \f0\fs24 \cf0 	
-\f1\fs22 \cf8 <!-- End stubbie plugin code -->
+\f1\fs22 \cf5 <!-- Start stubbie plugin code -->
 \f0\fs24 \cf0 \
-\pard\pardeftab720
+\pard\pardeftab720\ql\qnatural
 
-\f1\fs22 \cf7 </\cf9 plugins\cf7 >}
+\f1\fs22 \cf8 	<\cf9 plugin\cf0  \cf10 name\cf0 ="\cf8 StubbiePlugin\cf0 " \cf10 type\cf0 ="\cf8 stubbie.machii.StubbiePlugin\cf0 "\cf8 >\cf0 \
+		\cf8 <\cf9 parameters\cf8 >\cf0 \
+			\cf8 <\cf9 parameter\cf0  \cf10 name\cf0 ="\cf8 stubbieConfigFilePath\cf0 " \cf10 value\cf0 ="\cf8 ./config/stubbie/config.xml\cf0 " \cf8 />\cf0 \
+		\cf8 </\cf9 parameters\cf8 >\cf0 \
+	\cf8 </\cf9 plugin\cf8 >\
+\pard\pardeftab720\ql\qnatural
+
+\f0\fs24 \cf0 	
+\f1\fs22 \cf5 <!-- End stubbie plugin code -->
+\f0\fs24 \cf0 \
+\pard\pardeftab720\ql\qnatural
+
+\f1\fs22 \cf8 </\cf9 plugins\cf8 >\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs24 \cf0 If you are using 
+\b MXUnit
+\b0 , then to take full benefit of the integration between Mach-ii and ColdSpring I suggest you also set the attribute in your config.xml for
+\f1\fs22  \cf2 useMachIIColdSpring\cf3  
+\f0\fs24 \cf0 to true. If you choose to do so a few things will happen. For one the generator will create CFCs that hook into the ColdFusionApplication scope to find Mach-ii and try and use the 
+\i\b serviceFactory
+\i0\b0  as created by mach-ii (
+\b NOTE 
+\b0 you may need to update this value, I am working of defaults here). Secondly the code will create an additional CFC for use with MXUnit: RemoteFacade.cfc (this is required in order to access the application scope using the Eclipse plugin). Finally if you are using Eclipse for your tests you will need to update the URL for the service to point to this RemoteFacade.cfc.}

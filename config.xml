@@ -6,7 +6,7 @@
 		<packageRoot value="" /><!-- if you have a mapping for your app's cfcs, e.g. com.mydomain, specify it here (if you have specified an app name the result will be com.mydomain.myapp) -->
 		<saveTestFilesTo value="" /><!-- Not implemented yet, optional storage location for the test stubs -->
 		<unitTestFramework value="mxunit"/><!-- cfcUnit/cfUnit/mxunit -->
-		<coldSpring use="false" path="config/cs.xml"/><!-- (working on it) whether or not to use CS and if so where is the cs config file in relation to the app path -->
+		<coldSpring use="false" path="config/cs.xml" useMachIIColdSpring="false"/><!-- use CS to autowire to wire up the beans, if MachII app use that CS -->
 	</config>
 	
 </stubbie>

@@ -142,8 +142,24 @@
 	    <cfset output = Replace(Replace(output,"&lt;","<","ALL"),"&gt;",">","ALL")/>
 
 	    <cffile action="write" file="#variables.path#/test/CheckScopesTest.cfc" output="#trim(output)#"/>
-	    <cflog text="Created: #variables.path#/test/CheckScopesTest.cfc"/>
-
+	    
 	</cffunction>
+	
+	<!--- Author: gregstewart - Date: 5/10/2007 --->
+	<cffunction name="createRemoteFacade" output="false" access="public" returntype="void" hint="I create the test object for checking scopes">
+	    <cfargument name="path" type="string" required="true" />
 
+        <cfset var output = ""/>
+
+        <cfsavecontent variable="output">
+&lt;cfcomponent extends="mxunit.framework.RemoteFacade"&gt;
+&lt;/cfcomponent&gt;
+	    </cfsavecontent>
+
+	    <cfset output = Replace(Replace(output,"&lt;","<","ALL"),"&gt;",">","ALL")/>
+
+	    <cffile action="write" file="#variables.path#/test/RemoteFacade.cfc" output="#trim(output)#"/>
+	    
+	</cffunction>
+	
 </cfcomponent>

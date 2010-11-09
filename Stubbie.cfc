@@ -23,10 +23,6 @@
         <cfset variables.util = createObject("component","Util").init(variables.path,variables.packageRoot,"/",variables.paths)/>
 		<cfset variables.serverVersion = ListGetAt(server.coldfusion.productVersion,1)/>
 
-        <cfif variables.useColdSpring>
-            <cfset loadColdSpring() />
-        </cfif>
-
         <cfreturn this/>
 	</cffunction>
 
@@ -85,6 +81,14 @@
 
             <!--- Create the test suite --->
 			<cfset variables.frameworkObj.createTestSuite(testCFCs)/>
+			
+			<cfif variables.useColdSpring AND variables.useMachIIColdSpring AND NOT FileExists(variables.path&"/test/RemoteFacade.cfc")>
+				<cfif variables.unitTestFramework eq "mxunit">
+					<cfset variables.frameworkObj.createRemoteFacade(variables.path)/>
+				<cfelse>
+					<cfthrow type="COLDSPRING_INTEGRATION" message="Currently only MXUnit is supported using Mach-ii and ColdSpring" />
+				</cfif>
+			</cfif>
         </cfif>
 
 	</cffunction>
@@ -112,6 +116,7 @@
         <cfset variables.unitTestFramework = xmlDoc.stubbie.config.unitTestFramework.XmlAttributes["value"]/>
         <cfset variables.useColdSpring = xmlDoc.stubbie.config.coldSpring.XmlAttributes["use"]/>
 	    <cfset variables.coldSpringConfigPath = xmlDoc.stubbie.config.coldSpring.XmlAttributes["path"]/>
+	    <cfset variables.useMachIIColdSpring = xmlDoc.stubbie.config.coldSpring.XmlAttributes["useMachIIColdSpring"]/>
 	</cffunction>
 
 	<!--- Author: gregstewart - Date: 4/13/2007 --->
@@ -166,24 +171,6 @@
 
         <cfreturn componentDetails/>
 	</cffunction>
-
-    <!--- Author: gregstewart - Date: 7/11/2007 --->
-	<cffunction name="loadColdSpring" output="false" access="private" returntype="void" hint="I load the cs framework and initialise it with the cs file supplied">
-	    <!--- void loadBeansFromXmlFile(string beanDefinitionFile, boolean ConstructNonLazyBeans) --->
-        <cfset variables.myBeanFactory = createObject("component","coldspring.beans.DefaultXmlBeanFactory").init()/>
-
-        <cfif variables.coldSpringConfigPath eq "">
-            <cfthrow type="STUBBIE_COLDSPRING_CONFIG_ERROR" message="No coldspring config file supplied">
-        </cfif>
-
-        <cfif NOT FileExists(variables.path&"/"&variables.coldSpringConfigPath)>
-            <cfthrow type="STUBBIE_COLDSPRING_CONFIG_ERROR" message="No coldspring config file found: #variables.path&variables.coldSpringConfigPath#">
-        </cfif>
-
-        <cfset variables.myBeanFactory.loadBeansFromXmlFile(variables.path&"/"&variables.coldSpringConfigPath,true)/>
-        
-		<cfset variables.ColdSrpingLoaded = true />
-    </cffunction>
 
     <!--- Author: gregstewart - Date: 4/23/2007 --->
 	<cffunction name="compareMethods" output="false" access="public" returntype="struct" hint="I compare the test cfc to it's equivalent and look for new methods. If found I add them to the test struct">
@@ -255,15 +242,19 @@
 	    <cfsavecontent variable="output">
 		    
 	<cfoutput>#chr(10)#</cfoutput>
-	&lt;cffunction name="setUp" returntype="void" access="private" output="false" hint="I set up any test data or test requirements"&gt;
+	&lt;cffunction name="setUp" returntype="void" access="public" output="false" hint="I set up any test data or test requirements"&gt;
 	    &lt;!--- Test set up goes here ---&gt;
-	    <cfif NOT variables.useColdSpring AND NOT variables.ColdSrpingLoaded>
+	    <cfif NOT variables.useColdSpring>
 	    &lt;cfset variables.<cfoutput>#componentDetails.Name#</cfoutput> =  CreateObject("component","<cfoutput>#componentDetails.package#.#componentDetails.name#</cfoutput>").init() /&gt;
 	    <cfelse>
+	    	<cfif NOT variables.useMachIIColdSpring>
 	    &lt;cfset variables.beanFactory = createObject("component","coldspring.beans.DefaultXmlBeanFactory").init() /&gt;
         &lt;cfset variables.beanFactory.loadBeansFromXmlFile("<cfoutput>#variables.path#</cfoutput>/<cfoutput>#variables.coldSpringConfigPath#</cfoutput>",true) /&gt;
-        
-	    &lt;cfset variables.<cfoutput>#componentDetails.Name#</cfoutput> =  variables.beanFactory.getBean("<cfoutput>#componentDetails.Name#</cfoutput>") /&gt;
+        	<cfelse>
+		&lt;cfset propertyManager = application.public.appLoader.getAppManager().getPropertyManager() /&gt;
+		&lt;cfset variables.beanFactory = propertyManager.getProperty("serviceFactory") /&gt;
+			</cfif>
+		&lt;cfset variables.<cfoutput>#componentDetails.Name#</cfoutput> = variables.beanFactory.getBean("<cfoutput>#componentDetails.Name#</cfoutput>") /&gt;
 		</cfif>
 	&lt;/cffunction&gt;
 	<cfoutput>#chr(10)#</cfoutput>
@@ -280,7 +271,7 @@
 	    <cfsavecontent variable="output">
 		    
 	<cfoutput>#chr(10)#</cfoutput>
-	&lt;cffunction name="tearDown" output="false" access="private" returntype="void" hint="I tear down any test data"&gt;
+	&lt;cffunction name="tearDown" output="false" access="public" returntype="void" hint="I tear down any test data"&gt;
 		&lt;!--- Test tear down goes here ---&gt;
 	&lt;/cffunction&gt;
 	<cfoutput>#chr(10)#</cfoutput>
