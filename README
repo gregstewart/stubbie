@@ -1,4 +1,4 @@
-Stubbie 0.1
+Stubbie 0.3
 
 Short and sweet:
 Stubbie creates a set of test stub objects to be used in your unit tests based on your projects CFCs.
@@ -7,7 +7,7 @@ Stubbie was inspired by a feature in Rails that creates stub test objects based 
 
 You can run Stubbie standalone or as a plugin (there is a Mach-ii plugin available) and on execution it will recursively examine your projects code for CFCs and generate generic test objects for you, as well as a Test Suite. No more excuses to not use Unit Testing.
 
-It currently supports both CFUnit and CFCUnit.
+It currently supports both MXUnit, CFUnit and CFCUnit.
 
 Credits:
 Special thanks must go to Stephen (Spike) Milligan for allowing me to use his CFCDoc code which allowed me to quickly build the project without having to worry about the File System and CFC parsing.
@@ -18,7 +18,7 @@ Installation:
 The simplest way to install stubbie is to just place it in your webroot, alternatively you can just create a mapping called /stubbie and point it to your install folder.
 
 Usage:
-Using stubbie requires 2 steps the first is editing config.xml and the second is calling the component.
+Using stubbie requires 2 steps. The first is editing config.xml and the second is calling the component.
 
 Step 1
 Open up the config.xml file and edit it the following settings
@@ -50,7 +50,7 @@ Requirements:
 I have developed it and tested it on CFMX 8 and 7 but it should work just fine on CFMX 6.1.
 
 
-MXUnit
+MXUnit:
 If you wish to view the results of a MXUnit TestSuite build cease a test.cfm file like below in your test output folder:
 
 <cfparam name="url.output" default="html">
@@ -62,7 +62,7 @@ If you wish to view the results of a MXUnit TestSuite build cease a test.cfm fil
 
 Be sure to update the path for the test suite (here I am basing it off a build I ran for stubbie). Then simply open your browser to the location of the test.cfm file and all things being well you should see the results of your test.
 
-Mach-ii plugin
+Mach-ii plugin:
 I am assuming that you have followed the previous steps and are using a mapping called stubbie.  To add the mach-ii plugin imply add the the lines found between <!-- Start stubbie plugin code --> and  <!-- Start stubbie plugin code -->. This also assumes that you have a your stubby config file inside a config folder under the root of your mach-ii application.
 
 <!-- PLUGINS -->
