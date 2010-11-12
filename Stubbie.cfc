@@ -251,8 +251,9 @@
 	    &lt;cfset variables.beanFactory = createObject("component","coldspring.beans.DefaultXmlBeanFactory").init() /&gt;
         &lt;cfset variables.beanFactory.loadBeansFromXmlFile("<cfoutput>#variables.path#</cfoutput>/<cfoutput>#variables.coldSpringConfigPath#</cfoutput>",true) /&gt;
         	<cfelse>
-		&lt;cfset propertyManager = application.public.appLoader.getAppManager().getPropertyManager() /&gt;
-		&lt;cfset variables.beanFactory = propertyManager.getProperty("serviceFactory") /&gt;
+		<!--- TODO: public can depend on the MACHII_APP_KEY - read somewhere that you can use the injectMethod of MXUnit to get into CS --->
+		&lt;cfset variables.propertyManager = application.public.appLoader.getAppManager().getPropertyManager() /&gt;
+		&lt;cfset variables.beanFactory = variables.propertyManager.getProperty("serviceFactory") /&gt;
 			</cfif>
 		&lt;cfset variables.<cfoutput>#componentDetails.Name#</cfoutput> = variables.beanFactory.getBean("<cfoutput>#componentDetails.Name#</cfoutput>") /&gt;
 		</cfif>
