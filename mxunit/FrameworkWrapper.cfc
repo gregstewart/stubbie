@@ -110,7 +110,7 @@
 	    <cfsavecontent variable="output">
 	<cfoutput>#chr(10)#</cfoutput>
 	&lt;cffunction name="test<cfoutput>#UCase(left(arguments.methodName,1))&right(arguments.methodName,len(arguments.methodName)-1)#</cfoutput>" returntype="void" access="public" output="false"&gt;
-	    &lt;cfset assertFalse(true, "Stub test method - put your own test here") /&gt;
+	    &lt;cfset fail("test not yet implemented") /&gt;
 	&lt;/cffunction&gt;
 	<cfoutput>#chr(10)#</cfoutput>
 	    </cfsavecontent>
