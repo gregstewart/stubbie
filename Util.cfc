@@ -22,12 +22,10 @@
 	
 	</cffunction>
 	
-	 <cffunction name="setRootPath" access="public" returntype="void">
+	<cffunction name="setRootPath" access="public" returntype="void">
 	   <cfargument name="rootpath" required="true" type="string">
 	   <cfset variables.rootpath = arguments.rootpath>
 	 </cffunction>
-  
-
 
 	<cffunction name="getDetailURL" access="public" returntype="string" output="false" hint="Figures out whether or not the passed string is a component in the current package. If so it generates the appropriate URL to view the documentation for that component. If not it returns a non-functioning URL.">
 		<cfargument name="str" type="string" required="true" hint="Any string to be turned into a detail link">
@@ -259,5 +257,25 @@
 		</cfif>
 		
 		<cfreturn false />
+	</cffunction>
+	
+	<cffunction name="getMachIIAppPath" access="public" output="false" returntype="string">
+		<cfargument name="appKey" type="string" required="true" />
+		
+		<cfif StructKeyExists(application, "public") AND StructKeyExists(application.public, "appLoader")>
+			<cfreturn "public" />
+		<cfelse>
+			<cfif StructKeyExists(application, arguments.appKey)>
+				<cfreturn arguments.appKey />
+			<cfelse>
+				<cfthrow type="EXCEPTION_APPNAME_NOT_FOUND" message="Giving up can't find the mach-ii application name" />
+			</cfif>
+		</cfif>
+	</cffunction>
+	
+	<cffunction name="unescapeCreatedCode" access="public" output="false" returntype="string">
+		<cfargument name="code" type="string" required="true" />
+		
+		<cfreturn trim(Replace(Replace(arguments.code, "&lt;", "<","ALL"), "&gt;", ">" ,"ALL")) />
 	</cffunction>
 </cfcomponent>

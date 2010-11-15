@@ -5,12 +5,14 @@
         <cfargument name="path" type="string" required="true" />
         <cfargument name="packageRoot" type="string" required="true" />
         <cfargument name="rootPath" type="string" required="true" />
-
-        <cfscript>
+		<cfargument name="util" type="Util" required="true" />
+        
+		<cfscript>
 	        variables.app = arguments.app;
 	        variables.path = arguments.path;
 	        variables.packageRoot = arguments.packageRoot;
 	        variables.rootPath = arguments.rootPath;
+	        variables.util = arguments.util;
         </cfscript>
 
         <cfset setTestCase("org.cfcunit.framework.TestCase")/>
@@ -47,12 +49,9 @@
 	&lt;/cffunction&gt;
 
 &lt;/cfcomponent&gt;
-
 	    </cfsavecontent>
 
-	    <cfset output = Replace(Replace(output,"&lt;","<","ALL"),"&gt;",">","ALL")/>
-
-	    <cffile action="write" file="#variables.path#/test/AllTests.cfc" output="#trim(output)#" mode="777"/>
+	    <cffile action="write" file="#variables.path#/test/AllTests.cfc" output="#trim(variables.util.unescapeCreatedCode(output)#" mode="777"/>
 
 	</cffunction>
 
@@ -108,11 +107,13 @@
 	    <cfset var output = ""/>
 
 	    <cfsavecontent variable="output">
-	<cfoutput>#chr(10)#</cfoutput>
-	&lt;cffunction name="test<cfoutput>#UCase(left(arguments.methodName,1))&right(arguments.methodName,len(arguments.methodName)-1)#</cfoutput>" returntype="void" access="public" output="false"&gt;
+	<cfoutput>
+	#chr(10)#
+	&lt;cffunction name="test#UCase(left(arguments.methodName,1))&right(arguments.methodName,len(arguments.methodName)-1)#" returntype="void" access="public" output="false"&gt;
 	    &lt;cfset assertTrue(false, "Stub test method - put your own test here") /&gt;
 	&lt;/cffunction&gt;
-	<cfoutput>#chr(10)#</cfoutput>
+	#chr(10)#
+	</cfoutput>
 	    </cfsavecontent>
 
 	    <cfreturn output/>
@@ -125,11 +126,12 @@
         <cfset var output = ""/>
 
         <cfsavecontent variable="output">
-&lt;cfcomponent name="CheckScopesTest" hint="I check all scopes" extends="<cfoutput>#getTestCase()#</cfoutput>"&gt;
+<cfoutput>
+&lt;cfcomponent name="CheckScopesTest" hint="I check all scopes" extends="#getTestCase()#"&gt;
 
 	&lt;cffunction name="testCheckScopes" returntype="void" access="public" output="false"&gt;
 		&lt;cfset var varScopeChecker = CreateObject("component","stubbie.VarScopeChecker.VarScopeChecker")&gt;
-		&lt;cfset var aErrors = varScopeChecker.check( "<cfoutput>#arguments.path#</cfoutput>" ) /&gt;
+		&lt;cfset var aErrors = varScopeChecker.check( "#arguments.path#" ) /&gt;
 		&lt;cfset var isEmpty = evaluate("ArrayLen(aErrors) eq 0") /&gt;
 		&lt;cfset var message = "#arrayLen( aErrors )# local variable(s) were not var scoped. DETAILS: #aErrors.toString()#" /&gt;
 
@@ -137,11 +139,10 @@
 	&lt;/cffunction&gt;
 
 &lt;/cfcomponent&gt;
+</cfoutput>
 	    </cfsavecontent>
 
-	    <cfset output = Replace(Replace(output,"&lt;","<","ALL"),"&gt;",">","ALL")/>
-
-	    <cffile action="write" file="#variables.path#/test/CheckScopesTest.cfc" output="#trim(output)#" mode="777" />
+	    <cffile action="write" file="#variables.path#/test/CheckScopesTest.cfc" output="#trim(variables.util.unescapeCreatedCode(output))#" mode="777" />
 	
 	</cffunction>
 

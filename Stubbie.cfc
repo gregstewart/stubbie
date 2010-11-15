@@ -3,27 +3,26 @@
 	<cffunction name="init" output="false" access="public" returntype="Stubbie" hint="I initialise the component">
 		<cfargument name="configFilePath" type="string" required="true" hint="config file"/>
 
-        <cfset var tmpyStruct = StructNew()/>
-        <cfset var frameworkFactory = ""/>
+        <cfset var tmpyStruct = StructNew() />
+        <cfset var frameworkFactory = "" />
 		
-		<cfset variables.paths = ArrayNew(1)/>
+		<cfset variables.paths = ArrayNew(1) />
         <cfset variables.ColdSrpingLoaded = false />
         
-		
-		<cfset parseConfigFile(arguments.configFilePath)/>
+		<cfset parseConfigFile(arguments.configFilePath) />
 
         <cfset tmpyStruct["prefix"] = variables.app />
         <cfset tmpyStruct["path"] = variables.path />
         <cfset ArrayAppend(variables.paths,tmpyStruct) />
+		
+		<cfset variables.fso = createObject("component","FileSystemObject").init(variables.path, "/") />
+        <cfset variables.util = createObject("component","Util").init(variables.path, variables.packageRoot, "/", variables.paths) />
+		<cfset variables.serverVersion = ListGetAt(server.coldfusion.productVersion, 1) />
+		
+        <cfset frameworkFactory = CreateObject("component","FrameworkFactory").init(variables.app, variables.path, variables.packageRoot, variables.rootPath, variables.util) />
+        <cfset variables.frameworkObj = frameworkFactory.getFrameworkWrapper(variables.unitTestFramework) />
 
-        <cfset frameworkFactory = CreateObject("component","FrameworkFactory").init(variables.app,variables.path,variables.packageRoot,variables.rootPath)/>
-        <cfset variables.frameworkObj = frameworkFactory.getFrameworkWrapper(variables.unitTestFramework)/>
-
-        <cfset variables.fso = createObject("component","FileSystemObject").init(variables.path,"/")/>
-        <cfset variables.util = createObject("component","Util").init(variables.path,variables.packageRoot,"/",variables.paths)/>
-		<cfset variables.serverVersion = ListGetAt(server.coldfusion.productVersion,1)/>
-
-        <cfreturn this/>
+        <cfreturn this />
 	</cffunction>
 
     <!--- Author: gregstewart - Date: 4/13/2007 --->
@@ -112,6 +111,7 @@
 	    <cfset variables.app = xmlDoc.stubbie.config.appName.XmlAttributes["value"]/>
 	    <cfset variables.rootPath = Replace(xmlDoc.stubbie.config.appPath.XmlAttributes["value"],"\","/","ALL")/>
 		<cfset variables.path = variables.rootPath/>
+		<cfset variables.appKey = listLast(replace(variables.path, "\", "/", "all"), "/") /><!--- MACHII_APP_KEY --->
 	    <cfset variables.packageRoot = xmlDoc.stubbie.config.packageRoot.XmlAttributes["value"]/>
         <cfset variables.unitTestFramework = xmlDoc.stubbie.config.unitTestFramework.XmlAttributes["value"]/>
         <cfset variables.useColdSpring = xmlDoc.stubbie.config.coldSpring.XmlAttributes["use"]/>
@@ -139,26 +139,26 @@
         </cfif>
 
         <cfset testMethods = writeMethods(testMethods)/>
-
-        <cfsavecontent variable="tmpyTestCFC">
-&lt;cfcomponent name="<cfoutput>#Replace(tmpyStubName,".cfc","")#</cfoutput>" extends="<cfoutput>#variables.frameworkObj.getTestCase()#</cfoutput>"&gt;
+		
+		<cfsavecontent variable="tmpyTestCFC">
+<cfoutput>
+&lt;cfcomponent name="#Replace(tmpyStubName,".cfc","")#" extends="#variables.frameworkObj.getTestCase()#"&gt;
 
 	&lt;!--- Test properties go here ---&gt;
-	&lt;cfproperty name="variables.<cfoutput>#Replace(tmpyStubName,"Test.cfc","")#</cfoutput>" type="WEB-INF.cftags.component" hint=""/&gt;
+	&lt;cfproperty name="variables.#Replace(tmpyStubName,"Test.cfc","")#" type="WEB-INF.cftags.component" hint=""/&gt;
 	
-    <cfif NOT arguments.FileExists><cfoutput>#createSetup(arguments.FilePath)#</cfoutput></cfif>
+    <cfif NOT arguments.FileExists>#createSetup(arguments.FilePath)#</cfif>
 
 	&lt;!--- Tests go here ---&gt;
-    <cfoutput>#testMethods#</cfoutput>
-	<cfoutput>#chr(10)#</cfoutput>
-    <cfif NOT arguments.FileExists><cfoutput>#createTearDown(arguments.FilePath)#</cfoutput></cfif>
-
+    #testMethods#
+	
+	<cfif NOT arguments.FileExists>#createTearDown(arguments.FilePath)#</cfif>
+	
 &lt;/cfcomponent&gt;
+</cfoutput>
 		</cfsavecontent>
-
-        <cfset tmpyTestCFC = Replace(Replace(tmpyTestCFC,"&lt;","<","ALL"),"&gt;",">","ALL")/>
-
-        <cffile action="write" file="#arguments.FilePath#" output="#trim(tmpyTestCFC)#" mode="777"/>
+		
+        <cffile action="write" file="#arguments.FilePath#" output="#trim(variables.util.unescapeCreatedCode(tmpyTestCFC))#" mode="777"/>
         
 		<cfreturn arguments.FilePath/>
 	</cffunction>
@@ -181,16 +181,8 @@
 
         <cfloop collection="#arguments.cfcMethods.methods#" item="i">
             <cfif NOT StructKeyExists(arguments.existing.methods,"test"&i)>
-                <cftry>
-					<cfcatch type="any">
-						<cfset StructInsert(arguments.existing.methods,i,arguments.cfcMethods.methods[i])/>
-            			<cfdump var="#i#" />
-						<cfdump var="#arguments.existing.methods#" />
-						<cfdump var="#arguments.existing.cfcMethods#" />
-						<cfabort />
-					</cfcatch>
-				</cftry>
-			</cfif>
+                <cfset StructInsert(arguments.existing.methods,i,arguments.cfcMethods.methods[i])/>
+            </cfif>
         </cfloop>
 
 	    <cfreturn arguments.existing />
@@ -217,15 +209,17 @@
 		</cfif>
 
         <cfsavecontent variable="output">
+			<cfoutput>
             <cfloop list="#methodList#" index="i">
-				<cfoutput>#chr(10)#</cfoutput>
+				#chr(10)#
                 <cfif REFind("^(test)",arguments.componentDetails['methods'][i]['name']) OR REFind("tearDown|setUp",arguments.componentDetails['methods'][i]['name'])><!--- TODO: The regex for tearDown and setUp could be better --->
-    <cfoutput>#arguments.componentDetails['methods'][i]['fulltag']#</cfoutput>
+    #arguments.componentDetails['methods'][i]['fulltag']#
                 <cfelse>
-	<cfoutput>#variables.frameworkObj.getDummyTestMethod(arguments.componentDetails['methods'][i]['name'])#</cfoutput>
+	#variables.frameworkObj.getDummyTestMethod(arguments.componentDetails['methods'][i]['name'])#
                 </cfif>
-				<cfoutput>#chr(10)#</cfoutput>
+				#chr(10)#
             </cfloop>
+			</cfoutput>
 	    </cfsavecontent>
 
 	    <cfreturn trim(output)/>
@@ -240,25 +234,26 @@
 	    <cfset var componentDetails = variables.util.getCFCInformation(cleasendTest) />
 	    
 	    <cfsavecontent variable="output">
-		    
-	<cfoutput>#chr(10)#</cfoutput>
+	<cfoutput>	    
+	#chr(10)#
 	&lt;cffunction name="setUp" returntype="void" access="public" output="false" hint="I set up any test data or test requirements"&gt;
 	    &lt;!--- Test set up goes here ---&gt;
 	    <cfif NOT variables.useColdSpring>
-	    &lt;cfset variables.<cfoutput>#componentDetails.Name#</cfoutput> =  CreateObject("component","<cfoutput>#componentDetails.package#.#componentDetails.name#</cfoutput>").init() /&gt;
+	    &lt;cfset variables.#componentDetails.Name# =  CreateObject("component","#componentDetails.package#.#componentDetails.name#").init() /&gt;
 	    <cfelse>
 	    	<cfif NOT variables.useMachIIColdSpring>
 	    &lt;cfset variables.beanFactory = createObject("component","coldspring.beans.DefaultXmlBeanFactory").init() /&gt;
-        &lt;cfset variables.beanFactory.loadBeansFromXmlFile("<cfoutput>#variables.path#</cfoutput>/<cfoutput>#variables.coldSpringConfigPath#</cfoutput>",true) /&gt;
+        &lt;cfset variables.beanFactory.loadBeansFromXmlFile("#variables.path#/#variables.coldSpringConfigPath#",true) /&gt;
         	<cfelse>
-		<!--- TODO: public can depend on the MACHII_APP_KEY - read somewhere that you can use the injectMethod of MXUnit to get into CS --->
-		&lt;cfset variables.propertyManager = application.public.appLoader.getAppManager().getPropertyManager() /&gt;
+		<!--- TODO: read somewhere that you can use the injectMethod of MXUnit to get into CS --->
+		&lt;cfset variables.propertyManager = application.#variables.util.getMachIIAppPath(variables.appKey)#.appLoader.getAppManager().getPropertyManager() /&gt;
 		&lt;cfset variables.beanFactory = variables.propertyManager.getProperty("serviceFactory") /&gt;
 			</cfif>
-		&lt;cfset variables.<cfoutput>#componentDetails.Name#</cfoutput> = variables.beanFactory.getBean("<cfoutput>#componentDetails.Name#</cfoutput>") /&gt;
+		&lt;cfset variables.#componentDetails.Name# = variables.beanFactory.getBean("#componentDetails.Name#") /&gt;
 		</cfif>
 	&lt;/cffunction&gt;
-	<cfoutput>#chr(10)#</cfoutput>
+	#chr(10)#
+	</cfoutput>
 	    </cfsavecontent>
 	
 	    <cfreturn trim(output)/>
@@ -270,12 +265,14 @@
 	    <cfset var output = ""/>
 
 	    <cfsavecontent variable="output">
-		    
-	<cfoutput>#chr(10)#</cfoutput>
+	<cfoutput>
+
+	#chr(10)#
 	&lt;cffunction name="tearDown" output="false" access="public" returntype="void" hint="I tear down any test data"&gt;
 		&lt;!--- Test tear down goes here ---&gt;
 	&lt;/cffunction&gt;
-	<cfoutput>#chr(10)#</cfoutput>
+	#chr(10)#
+	</cfoutput>
 	    </cfsavecontent>
 
 	    <cfreturn trim(output)/>
@@ -286,6 +283,7 @@
 	    <cfset var output = ""/>
 
 	    <cfsavecontent variable="output">
+	<cfoutput>
 	&lt;project default="test" name="MyTest"&gt;
 	   &lt;property name="cfcUnitLib" value c:/workspace/cfcunit/lib /&gt;
 	   &lt;property name="hostname" value="localhost " /&gt;
@@ -296,6 +294,8 @@
 	      &lt;cfcUnit hostname="${hostname}" testcase="org.cfcunit.tests.iapa06-alltests" verbose="true" haltonfailure="true" haltonerror="true" showstacktrace="true" /&gt;
 	   &lt;/target&gt;
 	&lt;/project&gt;
+	</cfoutput>
 	    </cfsavecontent>
 	</cffunction>
+
 </cfcomponent>
