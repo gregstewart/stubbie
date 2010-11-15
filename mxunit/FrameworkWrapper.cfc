@@ -141,7 +141,7 @@
 
 	    <cfset output = Replace(Replace(output,"&lt;","<","ALL"),"&gt;",">","ALL")/>
 
-	    <cffile action="write" file="#variables.path#/test/CheckScopesTest.cfc" output="#trim(output)#"/>
+	    <cffile action="write" file="#variables.path#/test/CheckScopesTest.cfc" output="#trim(output)#" mode="777" />
 	    
 	</cffunction>
 	
@@ -158,7 +158,7 @@
 
 	    <cfset output = Replace(Replace(output,"&lt;","<","ALL"),"&gt;",">","ALL")/>
 
-	    <cffile action="write" file="#variables.path#/test/RemoteFacade.cfc" output="#trim(output)#"/>
+	    <cffile action="write" file="#variables.path#/test/RemoteFacade.cfc" output="#trim(output)#" mode="777" />
 	    
 	</cffunction>
 	
