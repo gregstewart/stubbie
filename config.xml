@@ -2,7 +2,7 @@
 
 	<config>
 		<appName value="stubbie" /><!-- the name of your app, can be the mapping name as set up in cfadmin -->
-		<appPath value="/Users/gregstewart/Sites/All sites/tcias/stubbie" /><!--full path to the app (e.g. /my/full/path/to/the code/)-->
+		<appPath value="/Users/gregstewart/Sites/coldfusion/stubbie" /><!--full path to the app (e.g. /my/full/path/to/the code/)-->
 		<packageRoot value="" /><!-- if you have a mapping for your app's cfcs, e.g. com.mydomain, specify it here (if you have specified an app name the result will be com.mydomain.myapp) -->
 		<saveTestFilesTo value="" /><!-- Not implemented yet, optional storage location for the test stubs -->
 		<unitTestFramework value="mxunit"/><!-- cfcUnit/cfUnit/mxunit -->

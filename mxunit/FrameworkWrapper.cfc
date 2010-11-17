@@ -104,16 +104,19 @@
     <!--- Author: gregstewart - Date: 5/1/2007 --->
 	<cffunction name="getDummyTestMethod" output="false" access="public" returntype="string" hint="I return the framwork specific test method">
 	    <cfargument name="methodName" type="string" required="true" />
+	    <cfargument name="methodAccess" type="string" required="true" />
+		<cfargument name="componentName" type="string" required="true" />
 
 	    <cfset var output = ""/>
 
 	    <cfsavecontent variable="output">
 	<cfoutput>
-	#chr(10)#
 	&lt;cffunction name="test#UCase(left(arguments.methodName,1))&right(arguments.methodName,len(arguments.methodName)-1)#" returntype="void" access="public" output="false"&gt;
+	    <cfif arguments.methodAccess eq "private" OR arguments.methodAccess eq "package">&lt;cfset makePublic(variables.#arguments.componentName#, "#arguments.methodName#") /&gt;</cfif>
+	    
 	    &lt;cfset fail("test not yet implemented") /&gt;
 	&lt;/cffunction&gt;
-	#chr(10)#
+	
 	</cfoutput>
 	    </cfsavecontent>
 

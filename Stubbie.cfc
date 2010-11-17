@@ -135,10 +135,10 @@
         <cfif arguments.FileExists>
             <cfset existingMethods = parseMethods(arguments.FilePath)/>
 
-            <cfset testMethods = compareMethods(existingMethods,testMethods)/>
+            <cfset testMethods = compareMethods(existingMethods, testMethods)/>
         </cfif>
 
-        <cfset testMethods = writeMethods(testMethods)/>
+        <cfset testMethods = writeMethods(testMethods, Replace(tmpyStubName,"Test.cfc",""))/>
 		
 		<cfsavecontent variable="tmpyTestCFC">
 <cfoutput>
@@ -151,7 +151,7 @@
 
 	&lt;!--- Tests go here ---&gt;
     #testMethods#
-	
+	#chr(10)#
 	<cfif NOT arguments.FileExists>#createTearDown(arguments.FilePath)#</cfif>
 	
 &lt;/cfcomponent&gt;
@@ -191,6 +191,7 @@
     <!--- Author: gregstewart - Date: 4/23/2007 --->
 	<cffunction name="writeMethods" output="false" access="public" returntype="string" hint="I take the result of the parse method and write it out as a string of test methods">
 	    <cfargument name="componentDetails" type="struct" required="true" />
+		<cfargument name="componentName" type="string" required="true" />
 
 	    <cfset var i = ""/>
 	    <cfset var output = ""/>
@@ -215,7 +216,7 @@
                 <cfif REFind("^(test)",arguments.componentDetails['methods'][i]['name']) OR REFind("tearDown|setUp",arguments.componentDetails['methods'][i]['name'])><!--- TODO: The regex for tearDown and setUp could be better --->
     #arguments.componentDetails['methods'][i]['fulltag']#
                 <cfelse>
-	#variables.frameworkObj.getDummyTestMethod(arguments.componentDetails['methods'][i]['name'])#
+	#variables.frameworkObj.getDummyTestMethod(arguments.componentDetails['methods'][i]['name'], arguments.componentDetails['methods'][i]['access'], arguments.componentName)#
                 </cfif>
 				#chr(10)#
             </cfloop>
@@ -261,12 +262,10 @@
 
     <!--- Author: gregstewart - Date: 4/24/2007 --->
 	<cffunction name="createTearDown" output="false" access="public" returntype="string" hint="I create the setup method">
-
 	    <cfset var output = ""/>
 
 	    <cfsavecontent variable="output">
 	<cfoutput>
-
 	#chr(10)#
 	&lt;cffunction name="tearDown" output="false" access="public" returntype="void" hint="I tear down any test data"&gt;
 		&lt;!--- Test tear down goes here ---&gt;
