@@ -29,7 +29,7 @@ Open up the config.xml file and edit it the following settings
 		<appPath value="/Full/Path/To/Root/Of/Your/App" /><!-- full path to the app, minus the app folder name -->
 		<packageRoot value="com.myDomain" /><!-- if you have a mapping for your app's cfcs, e.g. com.mydomain, specify it here -->
 		<saveTestFilesTo value="" /><!-- Not implemented yet, optional storage location for the test stubs -->
-		<unitTestFramework value="cfcUnit" /><!-- cfcUnit, cfUnit and mxunit are allowed options here -->
+		<unitTestFramework value="mxunit" applicationScopeAccess="true" /><!-- cfcUnit/cfUnit/mxunit applicationScopeAccess : true/false (only really applicable to mxunit if you want to create a remoteFacade to access the application scope of yoru app from within your tests)-->
 		<coldSpring use="false" path="config/cs.xml" useMachIIColdSpring="false" /><!-- use CS to autowire to wire up the beans, if MachII app use that CS -->
 	</config>
 	
