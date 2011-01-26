@@ -158,6 +158,15 @@
 
         <cfsavecontent variable="output">
 <cfoutput>
+&lt;!--- 
+	Remember to update the project properties to point to the remoteFacade CFC
+	You will need to over ride the test runner URL 
+	http://localhost/{appliactionName}/test/RemoteFacade.cfc?wsdl&method=ping
+	
+	replace {applicationName} with the app name, it should be a accessible URL,
+	So you might need to create a virtual directory or alias for this to work
+	If you have an alias different to the app name update it accordingly
+ ---&gt;
 &lt;cfcomponent extends="mxunit.framework.RemoteFacade"&gt;
 &lt;/cfcomponent&gt;
 </cfoutput>

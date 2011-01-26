@@ -81,7 +81,7 @@
             <!--- Create the test suite --->
 			<cfset variables.frameworkObj.createTestSuite(testCFCs)/>
 			
-			<cfif variables.useColdSpring AND variables.useMachIIColdSpring AND NOT FileExists(variables.path&"/test/RemoteFacade.cfc")>
+			<cfif (variables.useColdSpring AND variables.useMachIIColdSpring) OR (StructKeyExists(variables,"applicationScopeAccess") AND variables.applicationScopeAccess) AND NOT FileExists(variables.path&"/test/RemoteFacade.cfc")>
 				<cfif variables.unitTestFramework eq "mxunit">
 					<cfset variables.frameworkObj.createRemoteFacade(variables.path)/>
 				<cfelse>
@@ -108,15 +108,18 @@
 
         <cfset xmlDoc = XmlParse(fileContents)/>
 
-	    <cfset variables.app = xmlDoc.stubbie.config.appName.XmlAttributes["value"]/>
-	    <cfset variables.rootPath = Replace(xmlDoc.stubbie.config.appPath.XmlAttributes["value"],"\","/","ALL")/>
+	    <cfset variables.app = xmlDoc.stubbie.config.appName.XmlAttributes["value"] />
+	    <cfset variables.rootPath = Replace(xmlDoc.stubbie.config.appPath.XmlAttributes["value"],"\","/","ALL") />
 		<cfset variables.path = variables.rootPath/>
 		<cfset variables.appKey = listLast(replace(variables.path, "\", "/", "all"), "/") /><!--- MACHII_APP_KEY --->
-	    <cfset variables.packageRoot = xmlDoc.stubbie.config.packageRoot.XmlAttributes["value"]/>
-        <cfset variables.unitTestFramework = xmlDoc.stubbie.config.unitTestFramework.XmlAttributes["value"]/>
-        <cfset variables.useColdSpring = xmlDoc.stubbie.config.coldSpring.XmlAttributes["use"]/>
-	    <cfset variables.coldSpringConfigPath = xmlDoc.stubbie.config.coldSpring.XmlAttributes["path"]/>
-	    <cfset variables.useMachIIColdSpring = xmlDoc.stubbie.config.coldSpring.XmlAttributes["useMachIIColdSpring"]/>
+	    <cfset variables.packageRoot = xmlDoc.stubbie.config.packageRoot.XmlAttributes["value"] />
+        <cfset variables.unitTestFramework = xmlDoc.stubbie.config.unitTestFramework.XmlAttributes["value"] />
+		<cfif StructKeyExists(xmlDoc.stubbie.config.unitTestFramework.XmlAttributes,"applicationScopeAccess")>
+			<cfset variables.applicationScopeAccess = xmlDoc.stubbie.config.unitTestFramework.XmlAttributes["applicationScopeAccess"] />
+		</cfif>
+        <cfset variables.useColdSpring = xmlDoc.stubbie.config.coldSpring.XmlAttributes["use"] />
+	    <cfset variables.coldSpringConfigPath = xmlDoc.stubbie.config.coldSpring.XmlAttributes["path"] />
+	    <cfset variables.useMachIIColdSpring = xmlDoc.stubbie.config.coldSpring.XmlAttributes["useMachIIColdSpring"] />
 	</cffunction>
 
 	<!--- Author: gregstewart - Date: 4/13/2007 --->
