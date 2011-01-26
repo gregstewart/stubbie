@@ -5,7 +5,7 @@
 		<appPath value="/Users/gregstewart/Sites/coldfusion/stubbie" /><!--full path to the app (e.g. /my/full/path/to/the code/)-->
 		<packageRoot value="" /><!-- if you have a mapping for your app's cfcs, e.g. com.mydomain, specify it here (if you have specified an app name the result will be com.mydomain.myapp) -->
 		<saveTestFilesTo value="" /><!-- Not implemented yet, optional storage location for the test stubs -->
-		<unitTestFramework value="mxunit" applicationScopeAccess="true" /><!-- cfcUnit/cfUnit/mxunit applicationScopeAccess : true/false (only really applicable to mxunit if you want to create a remoteFacade to access the application scope of yoru app from within your tests)-->
+		<unitTestFramework value="mxunit" requiresApplicationScopeAccess="true" /><!-- cfcUnit/cfUnit/mxunit requiresApplicationScopeAccess : true/false (only really applicable to mxunit if you want to create a remoteFacade to access the application scope of yoru app from within your tests)-->
 		<coldSpring use="false" path="config/cs.xml" useMachIIColdSpring="false" /><!-- use CS to autowire to wire up the beans, if MachII app use that CS -->
 	</config>
 	
